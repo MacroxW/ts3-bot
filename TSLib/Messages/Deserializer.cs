@@ -103,21 +103,21 @@ namespace TSLib.Messages
 			if (line.IsEmpty)
 				return true;
 
-			var ss = new SpanSplitter<byte>();
-			ss.First(line, AsciiSpace);
 			try
 			{
-				do
+				var rem = line;
+				int nextIdx = rem.IndexOf(AsciiSpace);
+				while (rem.Length > 0)
 				{
-					var param = ss.Trim(line);
+					var param = nextIdx >= 0 ? rem.Slice(0, nextIdx) : rem;
 					var kvpSplitIndex = param.IndexOf(AsciiEquals);
 					var key = kvpSplitIndex >= 0 ? param.Slice(0, kvpSplitIndex) : ReadOnlySpan<byte>.Empty;
-					var value = kvpSplitIndex <= param.Length - 1 ? param.Slice(kvpSplitIndex + 1) : ReadOnlySpan<byte>.Empty;
+					var val = kvpSplitIndex <= param.Length - 1 ? param.Slice(kvpSplitIndex + 1) : ReadOnlySpan<byte>.Empty;
 
 					if (!key.IsEmpty)
 					{
 						var keyStr = key.NewUtf8String();
-						qm.SetField(keyStr, value, this);
+						qm.SetField(keyStr, val, this);
 						if (indexing != null)
 						{
 							if (single is null)
@@ -136,10 +136,11 @@ namespace TSLib.Messages
 						}
 					}
 
-					if (!ss.HasNext)
+					if (nextIdx < 0)
 						break;
-					ss = line;
-				} while (line.Length > 0);
+					rem = rem.Slice(nextIdx + 1);
+					nextIdx = rem.IndexOf(AsciiSpace);
+				}
 				return true;
 			}
 			catch (Exception ex)

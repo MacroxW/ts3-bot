@@ -36,7 +36,7 @@
     <PackageReference Include="NLog" Version="4.7.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="LiteDB" Version="5.0.17" />
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="10.0.0" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0">
       <ExcludeAssets>analyzers</ExcludeAssets>
     </PackageReference>
@@ -103,19 +103,7 @@
       <_Minor>13</_Minor>
       <_Version>$(_Major).$(_Minor).$(_NewBuildNumber)</_Version>
     </PropertyGroup>
-    <WriteLinesToFile File="$(IntermediateOutputPath)Version.g.cs" Overwrite="true" Lines="[assembly: System.Reflection.AssemblyVersion(&quot;$(_Major).$(_Minor).$(_NewBuildNumber)&quot;)]
-[assembly: System.Reflection.AssemblyFileVersion(&quot;$(_Major).$(_Minor).$(_NewBuildNumber)&quot;)]
-[assembly: System.Reflection.AssemblyInformationalVersion(&quot;$(_Version)&quot;)]
-namespace TS3AudioBot.Environment {
-    partial class BuildData {
-        partial void GetDataInternal() {
-            this.Version = &quot;$(_Version)&quot;;
-            this.Branch = &quot;master&quot;;
-            this.CommitSha = &quot;unknown&quot;;
-            this.BuildConfiguration = &quot;$(Configuration)&quot;;
-        }
-    }
-}" />
+    <Exec Command="&quot;$(MSBuildProjectDirectory)/generate_version.sh&quot; &quot;$(IntermediateOutputPath)Version.g.cs&quot; $(_Major) $(_Minor) $(_NewBuildNumber) $(Configuration)" />
     <ItemGroup>
       <FileWrites Include="$(IntermediateOutputPath)Version.g.cs" />
       <Compile Include="$(IntermediateOutputPath)Version.g.cs">
