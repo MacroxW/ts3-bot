@@ -50,7 +50,7 @@ channel = ""
 #The client badges. You can set a comma seperated string with max three GUID's. Here is a list: http://yat.qa/ressourcen/abzeichen-badges/
 badges = ""
 #Client nickname when connecting.
-name = "TS3AudioBot"
+name = "Dixibot"
 
 [bot.connect.identity]
 #||| DO NOT MAKE THIS KEY PUBLIC ||| The client identity. You can import a teamspeak3 identity here too.
@@ -137,7 +137,7 @@ media = { path = "" }
 #Changes how to try to resolve youtube songs
 # - youtubedl : uses youtube-dl only
 # - internal : uses the internal resolver, then youtube-dl
-prefer_resolver = "Internal"
+prefer_resolver = "YoutubeDl"
 #Set your own youtube api key to keep using the old youtube factory loader.
 #This feature is unsupported and may break at any time
 youtube_api_key = ""
@@ -163,7 +163,7 @@ hls_options = ""
 
 [tools]
 #Path to the youtube-dl binary or local git repository.
-youtube-dl = { path = "" }
+youtube-dl = { path = "/home/macrox/.local/bin/yt-dlp" }
 
 #The path to ffmpeg.
 [tools.ffmpeg]

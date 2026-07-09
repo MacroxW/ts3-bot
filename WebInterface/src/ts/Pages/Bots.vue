@@ -6,30 +6,39 @@
 <!-- TODO: Jump to dashboard -->
 
 <template>
-  <div>
-    <section class="field">
-      <b-field label="Actions">
+  <div class="bots-page">
+    <nav class="flow-nav" aria-label="Ruta de navegación">
+      <router-link to="/"><b-icon icon="home-outline" size="is-small"></b-icon> Inicio</router-link><b-icon icon="chevron-right" size="is-small"></b-icon><span>Bots</span>
+    </nav>
+    <header class="page-header">
+      <div><span class="page-kicker">Workspace</span><h1 class="title is-2">Tus bots</h1><p>Administrá conexiones, estados y configuraciones desde un solo lugar.</p></div>
+      <div class="bot-counter"><b-icon icon="robot"></b-icon><strong>{{ botsFiltered.length }}</strong><span>visibles</span></div>
+    </header>
+    <section class="filter-panel">
+	  <div class="workflow-hint"><span>1</span><div><strong>Elegí o creá un bot</strong><small>Después abrí su servidor, cargá música y ajustá su configuración.</small></div></div>
+      <b-field label="Acciones">
         <div class="buttons">
           <b-button
             icon-left="plus"
             class="is-success"
             @click="modalCreateBot = true"
-            >Create</b-button
+            >Crear bot</b-button
           >
           <b-button
             icon-left="flash"
             class="is-success"
             @click="modalQuickConnect = true"
-            >Quick connect</b-button
+            >Conexión rápida</b-button
           >
         </div>
       </b-field>
 
-      <b-field label="Filter">
+	  <b-field label="Buscar y filtrar">
         <b-field grouped group-multiline>
           <b-input
             v-model="showFilter"
-            placeholder="Filter by name and server"
+			icon="magnify"
+            placeholder="Nombre o servidor"
             expanded
           ></b-input>
           <b-field>
@@ -37,23 +46,23 @@
               v-model="showState"
               native-value="Connected"
               type="is-success"
-              >Connected</b-checkbox-button
+			  >Conectados</b-checkbox-button
             >
             <b-checkbox-button
               v-model="showState"
               native-value="Connecting"
               type="is-warning"
-              >Connecting</b-checkbox-button
+			  >Conectando</b-checkbox-button
             >
             <b-checkbox-button
               v-model="showState"
               native-value="Offline"
               type="is-danger"
-              >Offline</b-checkbox-button
+			  >Desconectados</b-checkbox-button
             >
           </b-field>
 
-          <b-tooltip class="control" label="Clear Filter">
+		  <b-tooltip class="control" label="Limpiar filtros">
             <b-button class="control" type="is-info" @click="clearFilter">
               <b-icon icon="filter-remove-outline" />
             </b-button>
@@ -62,13 +71,6 @@
       </b-field>
     </section>
 
-    <div>
-      <p>
-        Debug: displayTiles={{ displayTiles }}, botsFiltered.length={{
-          botsFiltered.length
-        }}
-      </p>
-    </div>
     <b-table
       v-if="displayTiles"
       :data="botsFiltered"
@@ -83,9 +85,10 @@
         ></b-icon>
         {{ props.row ? props.row.Id : "" }}
       </b-table-column>
-      <b-table-column field="Name" label="Name" v-slot="props">{{
-        props.row ? props.row.Name : ""
-      }}</b-table-column>
+	  <b-table-column field="Name" label="Bot" v-slot="props">
+		<router-link v-if="props.row && props.row.Id != null" class="bot-name-link" :to="{ name: 'r_server', params: { id: props.row.Id } }"><b-icon icon="robot" size="is-small"></b-icon><strong>{{ props.row.Name }}</strong></router-link>
+		<span v-else>{{ props.row ? props.row.Name : "" }}</span>
+	  </b-table-column>
       <b-table-column field="Server" label="Server" v-slot="props">
         <edi-text
           v-if="props.row"
@@ -101,8 +104,8 @@
           >{{ BotStatus[props.row.Status] }}</span
         >
       </b-table-column>
-      <b-table-column width="40" v-slot="props">
-        <div v-if="props.row" class="field is-grouped">
+	  <b-table-column label="Acciones" width="240" v-slot="props">
+        <div v-if="props.row" class="bot-actions">
           <b-tooltip
             v-if="props.row.Id == null"
             class="control"
@@ -120,7 +123,7 @@
           </b-tooltip>
           <b-tooltip
             class="control"
-            label="Jump to Server view"
+			label="Abrir panel del bot"
             :delay="helpDelay"
           >
             <b-button
@@ -138,7 +141,7 @@
           </b-tooltip>
           <b-tooltip
             class="control"
-            label="Jump to Settings"
+			label="Configuración"
             :delay="helpDelay"
           >
             <b-button
@@ -195,6 +198,7 @@
           </b-dropdown>
         </div>
       </b-table-column>
+	  <template slot="empty"><div class="empty-state"><b-icon icon="robot-confused-outline" size="is-large"></b-icon><strong>No encontramos bots</strong><span>Creá uno nuevo o limpiá los filtros para continuar.</span></div></template>
     </b-table>
 
     <b-modal :active.sync="modalQuickConnect">
@@ -422,7 +426,5 @@ export default Vue.extend({
 </script>
 
 <style lang="less">
-.table-wrapper {
-  overflow-x: unset;
-}
+.flow-nav{display:flex;align-items:center;gap:.4rem;margin-bottom:1.4rem;color:var(--muted);font-size:.82rem}.flow-nav a{display:flex;align-items:center;gap:.35rem;color:var(--muted)}.flow-nav a:hover{color:var(--brand)}.page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;margin-bottom:2rem}.page-header .title{margin:.3rem 0!important;letter-spacing:-.04em}.page-header p{color:var(--muted)}.page-kicker{color:var(--brand);font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.bot-counter{display:flex;align-items:center;gap:.55rem;padding:.75rem 1rem;background:var(--surface);border:1px solid var(--line);border-radius:14px;color:var(--brand)}.bot-counter strong{font-size:1.2rem}.bot-counter span{color:var(--muted);font-size:.8rem}.filter-panel{padding:1.35rem;margin-bottom:1.5rem;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.workflow-hint{display:flex;align-items:center;gap:.8rem;padding:.75rem 1rem;margin-bottom:1.2rem;border-radius:13px;background:rgba(109,93,252,.08)}.workflow-hint>span{display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:50%;background:var(--brand);color:#fff;font-weight:800}.workflow-hint div{display:flex;flex-direction:column}.workflow-hint small{color:var(--muted)}.filter-panel>.field:last-child{margin-bottom:0}.bots-page .table-wrapper{animation:rise .45s .08s ease both}.bot-actions{display:flex;align-items:center;gap:.5rem;white-space:nowrap}.bot-actions .control{margin:0!important}.bot-name-link{display:inline-flex;align-items:center;gap:.5rem;color:var(--text)}.bot-name-link:hover{color:var(--brand)}.empty-state{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:3rem;color:var(--muted)}.empty-state strong{color:var(--text);font-size:1.05rem}@media(max-width:768px){.page-header{align-items:flex-start}.bot-counter span{display:none}.filter-panel{padding:1rem}.filter-panel .field.is-grouped{display:block}.filter-panel .field.is-grouped>.control{margin-bottom:.65rem}.workflow-hint small{display:none}.bot-actions{min-width:230px}}
 </style>

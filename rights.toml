@@ -34,7 +34,7 @@
 	# Set your admin Group Ids here, ex: [ 13, 42 ]
 	groupid = []
 	# And/Or your admin Client Uids here
-	useruid = [  ]
+	useruid = [ "1hT5vEqxZGF4HxvjnUfefWf1jlQ=" ]
 	# By default treat requests from localhost as admin
 	ip = [ "127.0.0.1", "::1" ]
 

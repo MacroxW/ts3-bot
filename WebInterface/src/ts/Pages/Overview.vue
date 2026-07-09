@@ -1,10 +1,11 @@
 <template>
-	<div class="pure-g">
+	<div class="overview-page pure-g">
+		<header class="overview-header"><div><span>Live telemetry</span><h1 class="title is-2">Estado del sistema</h1><p>Información y rendimiento de tu instancia en tiempo real.</p></div><div class="live-pill"><i></i> En vivo</div></header>
 		<div class="tile is-ancestor">
 			<div class="tile is-vertical">
 				<div class="tile is-parent">
-					<div class="tile is-child notification">
-						<span class="title">About</span>
+					<div class="tile is-child notification stat-card about-card">
+						<span class="card-label"><b-icon icon="information-outline"></b-icon> Información</span>
 						<div class="formcontent">
 							<div class="formdatablock">
 								<div>Version:</div>
@@ -34,14 +35,14 @@
 			</div>
 			<div class="tile is-vertical">
 				<div class="tile is-parent">
-					<div class="tile is-child notification">
-						<span class="title">Cpu</span>
+					<div class="tile is-child notification stat-card">
+						<span class="card-label"><b-icon icon="chip"></b-icon> CPU</span>
 						<div id="data_cpugraph" style="position: relative;height: 10em;width: 100%;"></div>
 					</div>
 				</div>
 				<div class="tile is-parent">
-					<div class="tile is-child notification">
-						<span class="title">Memory</span>
+					<div class="tile is-child notification stat-card">
+						<span class="card-label"><b-icon icon="memory"></b-icon> Memoria</span>
 						<div id="data_memgraph" style="position: relative;height: 10em;width: 100%;"></div>
 					</div>
 				</div>
@@ -148,3 +149,7 @@ export default Vue.extend({
 	}
 });
 </script>
+
+<style lang="less">
+.overview-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.5rem}.overview-header span{color:var(--brand);font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.overview-header .title{margin:.35rem 0!important;letter-spacing:-.04em}.overview-header p{color:var(--muted)}.live-pill{display:flex;align-items:center;gap:.55rem;padding:.65rem .9rem;border:1px solid rgba(16,185,129,.2);border-radius:999px;background:rgba(16,185,129,.1);color:#10b981;font-size:.78rem;font-weight:800}.live-pill i{width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 0 5px rgba(16,185,129,.12);animation:pulse 2s infinite}.stat-card{min-height:230px;padding:1.5rem!important}.card-label{display:flex;align-items:center;gap:.5rem;margin-bottom:1.25rem;color:var(--muted);font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.about-card .formdatablock{justify-content:space-between;border-bottom:1px solid var(--line);padding:.38rem 0}.about-card .formdatablock>div:last-child{font-family:monospace;color:var(--brand);word-break:break-all}.overview-page .tile.is-parent{padding:.5rem}@media(max-width:768px){.overview-header{align-items:flex-start;gap:1rem}.overview-header p{display:none}.stat-card{min-height:200px}}
+</style>

@@ -48,11 +48,14 @@ const router = new VueRouter({
 		//{ path: "/openapi", component: Commands },
 		{ path: "/overview", component: Overview },
 		{ path: "/bots", component: Bots, name: "r_bots" },
+		{ path: "/bot", redirect: "/bots" },
+		{ path: "/bot/", redirect: "/bots" },
 		{
 			path: "/bot/:id",
 			component: Bot,
 			props: { online: true },
 			children: [
+				{ path: "", redirect: { name: "r_server" } },
 				{
 					name: "r_server",
 					path: "server",
@@ -83,6 +86,7 @@ const router = new VueRouter({
 				},
 			]
 		},
+		{ path: "*", redirect: "/" },
 	]
 });
 
