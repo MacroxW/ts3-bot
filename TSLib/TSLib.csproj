@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net10.0</TargetFramework>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <RootNamespace>TSLib</RootNamespace>
     <AssemblyName>TSLib</AssemblyName>
     <Nullable>enable</Nullable>
@@ -40,8 +40,7 @@
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.6.7" />
     <PackageReference Include="Splamy.Ed25519.Toolkit" Version="1.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.IO.Pipelines" Version="10.0.0" />
-  </ItemGroup>
+    </ItemGroup>
   <ItemGroup>
     <None Include="ReSpeak.png" Pack="true" PackagePath="\" />
     <None Include="Generated\BookParser.ttinclude" />

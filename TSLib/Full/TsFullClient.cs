@@ -256,14 +256,14 @@ namespace TSLib.Full
 
 		// Local event processing
 
-		async partial void ProcessEachInitIvExpand(InitIvExpand initIvExpand)
+async partial void ProcessEachInitIvExpand(InitIvExpand notifies)
 		{
 			var ctx = context;
 			if (ctx is null) throw new InvalidOperationException("context should be set");
 
 			ctx.PacketHandler.ReceivedFinalInitAck();
 
-			var result = ctx.TsCrypt.CryptoInit(initIvExpand.Alpha, initIvExpand.Beta, initIvExpand.Omega);
+			var result = ctx.TsCrypt.CryptoInit(notifies.Alpha, notifies.Beta, notifies.Omega);
 			if (!result)
 			{
 				ChangeState(ctx, TsClientStatus.Disconnected, CommandError.Custom($"Failed to calculate shared secret: {result.Error}"));
@@ -273,7 +273,7 @@ namespace TSLib.Full
 			await DefaultClientInit(ctx);
 		}
 
-		async partial void ProcessEachInitIvExpand2(InitIvExpand2 initIvExpand2)
+		async partial void ProcessEachInitIvExpand2(InitIvExpand2 notifies)
 		{
 			var ctx = context;
 			if (ctx is null) throw new InvalidOperationException("context should be set");
@@ -285,13 +285,13 @@ namespace TSLib.Full
 			var ekBase64 = Convert.ToBase64String(publicKey);
 			var toSign = new byte[86];
 			Array.Copy(publicKey, 0, toSign, 0, 32);
-			var beta = Convert.FromBase64String(initIvExpand2.Beta);
+			var beta = Convert.FromBase64String(notifies.Beta);
 			Array.Copy(beta, 0, toSign, 32, 54);
 			var sign = TsCrypt.Sign(ctx.ConnectionDataFull.Identity.PrivateKey, toSign);
 			var proof = Convert.ToBase64String(sign);
 			await ClientEk(ekBase64, proof);
 
-			var result = ctx.TsCrypt.CryptoInit2(initIvExpand2.License, initIvExpand2.Omega, initIvExpand2.Proof, initIvExpand2.Beta, privateKey);
+			var result = ctx.TsCrypt.CryptoInit2(notifies.License, notifies.Omega, notifies.Proof, notifies.Beta, privateKey);
 			if (!result)
 			{
 				ChangeState(ctx, TsClientStatus.Disconnected, CommandError.Custom($"Failed to calculate shared secret: {result.Error}"));
@@ -301,13 +301,13 @@ namespace TSLib.Full
 			await DefaultClientInit(ctx);
 		}
 
-		partial void ProcessEachInitServer(InitServer initServer)
+		partial void ProcessEachInitServer(InitServer notifies)
 		{
 			var ctx = context;
 			if (ctx is null) throw new InvalidOperationException("context should be set");
 
-			ctx.PacketHandler.ClientId = initServer.ClientId;
-			var serverVersion = TsVersion.TryParse(initServer.ServerVersion, initServer.ServerPlatform);
+			ctx.PacketHandler.ClientId = notifies.ClientId;
+			var serverVersion = TsVersion.TryParse(notifies.ServerVersion, notifies.ServerPlatform);
 			if (serverVersion != null)
 				ServerConstants = TsConst.GetByServerBuildNum(serverVersion.Build);
 
@@ -315,60 +315,57 @@ namespace TSLib.Full
 
 		}
 
-		async partial void ProcessEachPluginCommand(PluginCommand cmd)
+		async partial void ProcessEachPluginCommand(PluginCommand notifies)
 		{
-			if (cmd.Name == "cliententerview" && cmd.Data == "version")
+			if (notifies.Name == "cliententerview" && notifies.Data == "version")
 				await SendPluginCommand("cliententerview", "TAB", PluginTargetMode.Server);
 		}
 
-		partial void ProcessEachCommandError(CommandError error)
+		partial void ProcessEachCommandError(CommandError notifies)
 		{
 			var ctx = context;
 			if (ctx is null) throw new InvalidOperationException("context should be set");
 
 			if (status == TsClientStatus.Connecting)
-				ChangeState(ctx, TsClientStatus.Disconnected, error);
+				ChangeState(ctx, TsClientStatus.Disconnected, notifies);
 			else
-				OnErrorEvent?.Invoke(this, error);
+				OnErrorEvent?.Invoke(this, notifies);
 		}
 
-		partial void ProcessEachClientLeftView(ClientLeftView clientLeftView)
+		partial void ProcessEachClientLeftView(ClientLeftView notifies)
 		{
 			var ctx = context;
 			if (ctx is null) throw new InvalidOperationException("context should be set");
 
-			if (clientLeftView.ClientId == ctx.PacketHandler.ClientId)
+			if (notifies.ClientId == ctx.PacketHandler.ClientId)
 			{
-				ctx.ExitReason = clientLeftView.Reason;
+				ctx.ExitReason = notifies.Reason;
 				ChangeState(ctx, TsClientStatus.Disconnected);
 			}
 		}
 
-		async partial void ProcessEachChannelListFinished(ChannelListFinished _)
+		async partial void ProcessEachChannelListFinished(ChannelListFinished notifies)
 		{
 			await ChannelSubscribeAll();
 			await PermissionList();
 		}
 
-		async partial void ProcessEachClientConnectionInfoUpdateRequest(ClientConnectionInfoUpdateRequest _)
+		async partial void ProcessEachClientConnectionInfoUpdateRequest(ClientConnectionInfoUpdateRequest notifies)
 		{
 			if (context is null) throw new InvalidOperationException("context should be set");
 
 			await SendNoResponsed(context.PacketHandler.NetworkStats.GenerateStatusAnswer());
 		}
 
-		partial void ProcessPermList(PermList[] permList)
+		partial void ProcessEachPermList(PermList notifies)
 		{
-			var buildPermissions = new List<TsPermission>(permList.Length + 1) { TsPermission.undefined };
-			foreach (var perm in permList)
+			var buildPermissions = new List<TsPermission>(1) { TsPermission.undefined };
+			if (!string.IsNullOrEmpty(notifies.PermissionName))
 			{
-				if (!string.IsNullOrEmpty(perm.PermissionName))
-				{
-					if (Enum.TryParse<TsPermission>(perm.PermissionName, out var tsPerm))
-						buildPermissions.Add(tsPerm);
-					else
-						buildPermissions.Add(TsPermission.undefined);
-				}
+				if (Enum.TryParse<TsPermission>(notifies.PermissionName, out var tsPerm))
+					buildPermissions.Add(tsPerm);
+				else
+					buildPermissions.Add(TsPermission.undefined);
 			}
 			Deserializer.PermissionTransform = new TablePermissionTransform(buildPermissions.ToArray());
 		}

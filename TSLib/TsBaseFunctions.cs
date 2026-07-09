@@ -328,7 +328,7 @@ namespace TSLib
 				return CommandError.Custom("Avatar upload failed: " + token.Error.ErrorFormat());
 			if (token.Value.Status != TransferStatus.Done)
 				return CommandError.Custom("Avatar upload failed");
-			var md5 = string.Concat(token.Value.Md5Sum.Select(x => x.ToString("x2")));
+			var md5 = string.Concat(token.Value.Md5Sum?.Select(x => x.ToString("x2")) ?? Array.Empty<string>());
 			return await SendVoid(new TsCommand("clientupdate") { { "client_flag_avatar", md5 } });
 		}
 

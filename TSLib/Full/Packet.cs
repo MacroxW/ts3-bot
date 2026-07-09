@@ -35,7 +35,9 @@ namespace TSLib.Full
 		public uint GenerationId { get; set; }
 		public int Size => Data.Length;
 
+		#pragma warning disable CS8618 // Field is initialized via FromRaw/FromHeader
 		public TDir HeaderExt { get; set; }
+#pragma warning restore CS8618
 
 		public byte[] Raw { get; private set; }
 		public byte[] Header { get; private set; }
