@@ -257,3 +257,5 @@ publish-linux/
 yt-dlp
 cookies.txt
 ytdlp.sh
+.cocoindex_code/**
+.cocoindex_code/target_sqlite.db

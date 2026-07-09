@@ -1,16 +1,10 @@
-# KBTS3AudioBot
+# Dixibot
 
-This is a open-source TeamSpeak3 bot, playing music and much more.
+This is an advanced, open-source TeamSpeak 3 music bot with a premium web interface and multi-instance support.
 
-## Build status
+## Migration & Upgrades
 
-![Build and Release](https://img.shields.io/github/actions/workflow/status/scheissegalo/KBTS3AudioBot/dotnet.yml?branch=master&label=Build)
-
-## Upgraded to NET 6.0
-
-ensuring compatibility and taking advantage of the latest framework features and improvements.
-This upgrade results in a more efficient application, with reduced memory usage and a significantly smaller binary size.
-All vulnerabilities have been addressed and resolved during the upgrade process.
+Dixibot has been migrated to **.NET 10.0**, taking advantage of modern performance features, reduced memory footprints, and faster compilation. All third-party vulnerabilities have been addressed.
 
 ## Sign in to confirm you’re not a bot. This helps protect our community
 
@@ -265,31 +259,30 @@ You can install the [youtube-dl](https://github.com/rg3/youtube-dl/) binary or s
 1. Congratz, you're done! Enjoy listening to your favourite music, experimenting with the crazy command system or do whatever you whish to do ;).  
    For further reading check out the [CommandSystem](https://github.com/scheissegalo/TS3AudioBot/wiki/CommandSystem).
 
-### Download
+### Building & Running
 
-Download the git repository with `git clone --recurse-submodules https://github.com/scheissegalo/KBTS3AudioBot.git`.
+A `Makefile` is provided at the root of the project to simplify compilation, setup, and execution:
 
-#### Linux
-
-1. Get the latest `dotnet core 3.1` version by following [this tutorial](https://docs.microsoft.com/dotnet/core/install/linux-package-managers) and choose your platform
-1. Go into the directory of the repository with `cd KBTS3AudioBot`
-1. Execute `dotnet build --framework netcoreapp3.1 --configuration Release KBTS3AudioBot` to build the AudioBot
-1. The binary will be in `./KBTS3AudioBot/bin/Release/netcoreapp3.1` and can be run with `dotnet KBTS3AudioBot.dll`
-
-#### Windows
-
-1. Make sure you have `Visual Studio` with the `dotnet core 3.1` development toolchain installed
-1. Build the AudioBot with Visual Studio.
-
-### Building the WebInterface
-
-1. Go with the console of your choice into the `./WebInterface` folder
-1. Run `npm install` to restore or update all dependencies for this project
-1. Run `npm run build` to build the project.  
-   The built project will be in `./WebInterface/dist`.  
-   Make sure to the set the webinterface path in the ts3audiobot.toml to this folder.
-1. You can alternatively use `npm run start` for development.  
-   This will use the webpack dev server with live reload instead of the ts3ab server.
+- **Build everything** (both the bot and the web interface):
+  ```bash
+  make build
+  ```
+- **Build only the bot** (C# / .NET 10.0):
+  ```bash
+  make build-bot
+  ```
+- **Build only the Web Interface** (TypeScript / Vue.js):
+  ```bash
+  make build-web
+  ```
+- **Link libopus and start the bot cleanly** (automatically terminates conflicting instances first):
+  ```bash
+  make run
+  ```
+- **Clean build artifacts**:
+  ```bash
+  make clean
+  ```
 
 ## Community
 
