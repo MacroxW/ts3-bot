@@ -3,8 +3,8 @@
     <RootNamespace>TS3AudioBot</RootNamespace>
     <AssemblyName>TS3AudioBot</AssemblyName>
     <OutputType>Exe</OutputType>
-    <LangVersion>8.0</LangVersion>
-    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <TargetFramework>net10.0</TargetFramework>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <RollForward>Major</RollForward>
     <Nullable>enable</Nullable>
@@ -36,15 +36,13 @@
     <PackageReference Include="NLog" Version="4.7.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="LiteDB" Version="5.0.17" />
-    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0">
       <ExcludeAssets>analyzers</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Nett" Version="0.15.0" />
     <PackageReference Include="PlaylistsNET" Version="1.1.2" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.117" />
     <TrimmerRootAssembly Include="System.Text.Json" />
   </ItemGroup>
@@ -87,15 +85,28 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <Target Name="GenerateBuildVersion" BeforeTargets="BeforeCompile">
+  <Target Name="GenerateBuildVersion" BeforeTargets="BeforeCompile" Inputs="build_number.txt" Outputs="$(IntermediateOutputPath)Version.g.cs">
+    <PropertyGroup>
+      <_BuildNumberFile>$(MSBuildProjectDirectory)\build_number.txt</_BuildNumberFile>
+    </PropertyGroup>
+    <ReadLinesFromFile File="$(_BuildNumberFile)" Condition="Exists('$(_BuildNumberFile)')">
+      <Output TaskParameter="Lines" ItemName="_BuildNumberLines" />
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <_OldBuildNumber>@(_BuildNumberLines)</_OldBuildNumber>
+      <_OldBuildNumber Condition="'$(_OldBuildNumber)' == ''">0</_OldBuildNumber>
+      <_NewBuildNumber>$([MSBuild]::Add($(_OldBuildNumber), 1))</_NewBuildNumber>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(_BuildNumberFile)" Lines="$(_NewBuildNumber)" Overwrite="true" />
+    <PropertyGroup>
+      <_Major>0</_Major>
+      <_Minor>13</_Minor>
+      <_Version>$(_Major).$(_Minor).$(_NewBuildNumber)</_Version>
+    </PropertyGroup>
+    <Exec Command="&quot;$(MSBuildProjectDirectory)/generate_version.sh&quot; &quot;$(IntermediateOutputPath)Version.g.cs&quot; $(_Major) $(_Minor) $(_NewBuildNumber) $(Configuration)" />
     <ItemGroup>
-      <VersionBuildScript Include="build.csx" />
-      <VersionBuildOutputFile Include="$(IntermediateOutputPath)Version.g.cs" />
-    </ItemGroup>
-    <Exec Command="dotnet script @(VersionBuildScript) -- @(VersionBuildOutputFile) $(Configuration)" />
-    <ItemGroup>
-      <FileWrites Include="@(VersionBuildOutputFile)" />
-      <Compile Include="@(VersionBuildOutputFile)">
+      <FileWrites Include="$(IntermediateOutputPath)Version.g.cs" />
+      <Compile Include="$(IntermediateOutputPath)Version.g.cs">
         <AutoGen>True</AutoGen>
       </Compile>
     </ItemGroup>

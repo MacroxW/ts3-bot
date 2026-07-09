@@ -103,23 +103,21 @@ namespace TSLib.Messages
 			if (line.IsEmpty)
 				return true;
 
-			var ss = new SpanSplitter<byte>();
-			ss.First(line, AsciiSpace);
-			var key = ReadOnlySpan<byte>.Empty;
-			var value = ReadOnlySpan<byte>.Empty;
 			try
 			{
-				do
+				var rem = line;
+				int nextIdx = rem.IndexOf(AsciiSpace);
+				while (rem.Length > 0)
 				{
-					var param = ss.Trim(line);
+					var param = nextIdx >= 0 ? rem.Slice(0, nextIdx) : rem;
 					var kvpSplitIndex = param.IndexOf(AsciiEquals);
-					key = kvpSplitIndex >= 0 ? param.Slice(0, kvpSplitIndex) : ReadOnlySpan<byte>.Empty;
-					value = kvpSplitIndex <= param.Length - 1 ? param.Slice(kvpSplitIndex + 1) : ReadOnlySpan<byte>.Empty;
+					var key = kvpSplitIndex >= 0 ? param.Slice(0, kvpSplitIndex) : ReadOnlySpan<byte>.Empty;
+					var val = kvpSplitIndex <= param.Length - 1 ? param.Slice(kvpSplitIndex + 1) : ReadOnlySpan<byte>.Empty;
 
 					if (!key.IsEmpty)
 					{
 						var keyStr = key.NewUtf8String();
-						qm.SetField(keyStr, value, this);
+						qm.SetField(keyStr, val, this);
 						if (indexing != null)
 						{
 							if (single is null)
@@ -138,15 +136,16 @@ namespace TSLib.Messages
 						}
 					}
 
-					if (!ss.HasNext)
+					if (nextIdx < 0)
 						break;
-					line = ss.Next(line);
-				} while (line.Length > 0);
+					rem = rem.Slice(nextIdx + 1);
+					nextIdx = rem.IndexOf(AsciiSpace);
+				}
 				return true;
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, "Deserialization format error. Data: class:{0} field:{1} value:{2} msg:{3}", qm.GetType().Name, key.NewUtf8String(), value.NewUtf8String(), line.NewUtf8String());
+				Log.Error(ex, "Deserialization format error. Data: class:{0} msg:{1}", qm.GetType().Name, line.NewUtf8String());
 				return false;
 			}
 		}

@@ -283,6 +283,29 @@ A `Makefile` is provided at the root of the project to simplify compilation, set
   ```bash
   make clean
   ```
+Requires [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
+
+#### Linux
+
+1. Install the .NET 10.0 SDK from [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet/10.0)
+1. Go into the directory of the repository with `cd KBTS3AudioBot`
+1. Execute `dotnet build --configuration Release` to build the bot
+1. The binary will be in `./TS3AudioBot/bin/Release/net10.0` and can be run with `dotnet TS3AudioBot.dll`
+
+#### Windows
+
+1. Make sure you have `Visual Studio` with the .NET 10.0 development toolchain installed
+1. Build the AudioBot with Visual Studio.
+
+### Building the WebInterface
+
+1. Go with the console of your choice into the `./WebInterface` folder
+1. Run `npm install` to restore or update all dependencies for this project
+1. Run `npm run build` to build the project.  
+   The built project will be in `./WebInterface/dist`.  
+   Make sure to the set the webinterface path in the ts3audiobot.toml to this folder.
+1. You can alternatively use `npm run start` for development.  
+   This will use the webpack dev server with live reload instead of the ts3ab server.
 
 ## Community
 

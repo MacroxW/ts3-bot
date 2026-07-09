@@ -197,7 +197,7 @@ namespace TS3AudioBot.Plugins
 			var param = AppDomain.CurrentDomain.GetAssemblies()
 				.Where(asm => !asm.IsDynamic && !string.IsNullOrEmpty(asm.Location))
 				.Select(asm => MetadataReference.CreateFromFile(asm.Location))
-				.Concat(new[] { MetadataReference.CreateFromFile(Assembly.GetExecutingAssembly().Location) }).ToArray();
+				.Concat(new[] { MetadataReference.CreateFromFile(typeof(Plugin).Assembly.Location ?? Path.Combine(AppContext.BaseDirectory, "TS3AudioBot.dll")) }).ToArray();
 
 			using var pluginFileStream = System.IO.File.OpenRead(File.FullName);
 			var sourceTree = CSharpSyntaxTree.ParseText(SourceText.From(pluginFileStream));

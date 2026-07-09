@@ -3,7 +3,7 @@
 		<section class="hero is-primary" style="margin-top:3em; margin-bottom:5em;">
 			<div class="hero-body">
 				<div class="container">
-					<h1 class="title">North Industries - TS3Audiobot</h1>
+					<h1 class="title">Dixibot - TS3Audiobot</h1>
 					<h2 class="subtitle">You can recognize music bots by their orange-colored icon. Not all bots are music bots.
 
 Drag one of the music bots into your channel, and you can post YouTube links that the bot will automatically download and play. To post links, you need at least Member privileges.</h2>

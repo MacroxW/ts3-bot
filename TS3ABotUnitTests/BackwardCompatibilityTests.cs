@@ -26,16 +26,16 @@ namespace TS3ABotUnitTests
 			using var resolver = new YoutubeResolver(conf);
 			
 			// Assert: Resolver should be created successfully
-			Assert.IsNotNull(resolver);
-			Assert.AreEqual("youtube", resolver.ResolverFor);
+			Assert.That(resolver, Is.Not.Null);
+			Assert.That(resolver.ResolverFor, Is.EqualTo("youtube"));
 			
 			// Verify that the config values are accessible and have defaults
-			Assert.IsNotNull(conf.CookieFile);
-			Assert.IsNotNull(conf.ExtractorArgs);
+			Assert.That(conf.CookieFile, Is.Not.Null);
+			Assert.That(conf.ExtractorArgs, Is.Not.Null);
 			
 			// Default values should be empty strings
-			Assert.AreEqual("", conf.CookieFile.Value);
-			Assert.AreEqual("", conf.ExtractorArgs.Value);
+			Assert.That(conf.CookieFile.Value, Is.EqualTo(""));
+			Assert.That(conf.ExtractorArgs.Value, Is.EqualTo(""));
 		}
 
 		/// <summary>
@@ -68,7 +68,7 @@ namespace TS3ABotUnitTests
 				};
 				
 				var result = YoutubeDlHelper.FilterBestEnhanced(formats);
-				Assert.IsNotNull(result);
+				Assert.That(result, Is.Not.Null);
 			});
 		}
 
@@ -112,9 +112,9 @@ namespace TS3ABotUnitTests
 			var result = YoutubeDlHelper.FilterBest(formats);
 			
 			// Assert: Should select the highest bitrate audio-only format
-			Assert.IsNotNull(result);
-			Assert.AreEqual("251", result.format_id); // Opus with 160 abr
-			Assert.AreEqual("none", result.vcodec);
+			Assert.That(result, Is.Not.Null);
+			Assert.That(result.format_id, Is.EqualTo("251")); // Opus with 160 abr
+			Assert.That(result.vcodec, Is.EqualTo("none"));
 		}
 
 		/// <summary>
@@ -149,9 +149,9 @@ namespace TS3ABotUnitTests
 			var result = YoutubeDlHelper.FilterBestEnhanced(formats);
 			
 			// Assert: Should select audio-only format (prefers audio-only over combined)
-			Assert.IsNotNull(result);
-			Assert.AreEqual("140", result.format_id);
-			Assert.AreEqual("none", result.vcodec);
+			Assert.That(result, Is.Not.Null);
+			Assert.That(result.format_id, Is.EqualTo("140"));
+			Assert.That(result.vcodec, Is.EqualTo("none"));
 		}
 
 		/// <summary>
@@ -165,22 +165,22 @@ namespace TS3ABotUnitTests
 			var helperType = typeof(YoutubeDlHelper);
 			
 			// Check for existing public methods
-			Assert.IsNotNull(helperType.GetMethod("GetSingleVideo"));
-			Assert.IsNotNull(helperType.GetMethod("GetPlaylistAsync"));
-			Assert.IsNotNull(helperType.GetMethod("GetSearchAsync"));
-			Assert.IsNotNull(helperType.GetMethod("FindYoutubeDl"));
-			Assert.IsNotNull(helperType.GetMethod("RunYoutubeDl"));
-			Assert.IsNotNull(helperType.GetMethod("ParseResponse"));
-			Assert.IsNotNull(helperType.GetMethod("FilterBest"));
-			Assert.IsNotNull(helperType.GetMethod("FilterBestEnhanced"));
-			Assert.IsNotNull(helperType.GetMethod("IsHlsManifest"));
-			Assert.IsNotNull(helperType.GetMethod("TransformYtdlError"));
-			Assert.IsNotNull(helperType.GetMethod("MapToSongInfo"));
+			Assert.That(helperType.GetMethod("GetSingleVideo"), Is.Not.Null);
+			Assert.That(helperType.GetMethod("GetPlaylistAsync"), Is.Not.Null);
+			Assert.That(helperType.GetMethod("GetSearchAsync"), Is.Not.Null);
+			Assert.That(helperType.GetMethod("FindYoutubeDl"), Is.Not.Null);
+			Assert.That(helperType.GetMethod("RunYoutubeDl"), Is.Not.Null);
+			Assert.That(helperType.GetMethod("ParseResponse"), Is.Not.Null);
+			Assert.That(helperType.GetMethod("FilterBest"), Is.Not.Null);
+			Assert.That(helperType.GetMethod("FilterBestEnhanced"), Is.Not.Null);
+			Assert.That(helperType.GetMethod("IsHlsManifest"), Is.Not.Null);
+			Assert.That(helperType.GetMethod("TransformYtdlError"), Is.Not.Null);
+			Assert.That(helperType.GetMethod("MapToSongInfo"), Is.Not.Null);
 			
 			// Check for public properties
-			Assert.IsNotNull(helperType.GetProperty("DataObj"));
-			Assert.IsNotNull(helperType.GetProperty("CookieFile"));
-			Assert.IsNotNull(helperType.GetProperty("ExtractorArgs"));
+			Assert.That(helperType.GetProperty("DataObj"), Is.Not.Null);
+			Assert.That(helperType.GetProperty("CookieFile"), Is.Not.Null);
+			Assert.That(helperType.GetProperty("ExtractorArgs"), Is.Not.Null);
 		}
 
 		/// <summary>
@@ -195,25 +195,25 @@ namespace TS3ABotUnitTests
 			using var resolver = new YoutubeResolver(conf);
 			
 			// Assert: Verify that resolver implements expected interfaces
-			Assert.IsInstanceOf<IResourceResolver>(resolver);
-			Assert.IsInstanceOf<IPlaylistResolver>(resolver);
-			Assert.IsInstanceOf<IThumbnailResolver>(resolver);
-			Assert.IsInstanceOf<ISearchResolver>(resolver);
+			Assert.That(resolver, Is.InstanceOf<IResourceResolver>());
+			Assert.That(resolver, Is.InstanceOf<IPlaylistResolver>());
+			Assert.That(resolver, Is.InstanceOf<IThumbnailResolver>());
+			Assert.That(resolver, Is.InstanceOf<ISearchResolver>());
 			
 			// Verify ResolverFor property
-			Assert.AreEqual("youtube", resolver.ResolverFor);
+			Assert.That(resolver.ResolverFor, Is.EqualTo("youtube"));
 			
 			// Verify that all expected public methods still exist
 			var resolverType = typeof(YoutubeResolver);
-			Assert.IsNotNull(resolverType.GetMethod("MatchResource"));
-			Assert.IsNotNull(resolverType.GetMethod("MatchPlaylist"));
-			Assert.IsNotNull(resolverType.GetMethod("GetResource"));
-			Assert.IsNotNull(resolverType.GetMethod("GetResourceById"));
-			Assert.IsNotNull(resolverType.GetMethod("RestoreLink"));
-			Assert.IsNotNull(resolverType.GetMethod("GetPlaylist"));
-			Assert.IsNotNull(resolverType.GetMethod("GetThumbnail"));
-			Assert.IsNotNull(resolverType.GetMethod("Search"));
-			Assert.IsNotNull(resolverType.GetMethod("Dispose"));
+			Assert.That(resolverType.GetMethod("MatchResource"), Is.Not.Null);
+			Assert.That(resolverType.GetMethod("MatchPlaylist"), Is.Not.Null);
+			Assert.That(resolverType.GetMethod("GetResource"), Is.Not.Null);
+			Assert.That(resolverType.GetMethod("GetResourceById"), Is.Not.Null);
+			Assert.That(resolverType.GetMethod("RestoreLink"), Is.Not.Null);
+			Assert.That(resolverType.GetMethod("GetPlaylist"), Is.Not.Null);
+			Assert.That(resolverType.GetMethod("GetThumbnail"), Is.Not.Null);
+			Assert.That(resolverType.GetMethod("Search"), Is.Not.Null);
+			Assert.That(resolverType.GetMethod("Dispose"), Is.Not.Null);
 		}
 
 		/// <summary>
@@ -227,10 +227,10 @@ namespace TS3ABotUnitTests
 			var conf = new ConfResolverYoutube();
 			
 			// Assert: Verify default values
-			Assert.AreEqual("", conf.CookieFile.Value, "CookieFile should default to empty string");
-			Assert.AreEqual("", conf.ExtractorArgs.Value, "ExtractorArgs should default to empty string");
-			Assert.AreEqual(LoaderPriority.Internal, conf.ResolverPriority.Value, "ResolverPriority should default to Internal");
-			Assert.AreEqual("", conf.ApiKey.Value, "ApiKey should default to empty string");
+			Assert.That(conf.CookieFile.Value, Is.EqualTo(""), "CookieFile should default to empty string");
+			Assert.That(conf.ExtractorArgs.Value, Is.EqualTo(""), "ExtractorArgs should default to empty string");
+			Assert.That(conf.ResolverPriority.Value, Is.EqualTo(LoaderPriority.Internal), "ResolverPriority should default to Internal");
+			Assert.That(conf.ApiKey.Value, Is.EqualTo(""), "ApiKey should default to empty string");
 		}
 
 		/// <summary>
@@ -248,8 +248,8 @@ namespace TS3ABotUnitTests
 			using var resolver = new YoutubeResolver(conf);
 			
 			// Assert: Resolver should be created successfully
-			Assert.IsNotNull(resolver);
-			Assert.AreEqual("youtube", resolver.ResolverFor);
+			Assert.That(resolver, Is.Not.Null);
+			Assert.That(resolver.ResolverFor, Is.EqualTo("youtube"));
 			
 			// The resolver should work the same way regardless of priority
 			// (since internal scraper is deprecated)
@@ -279,17 +279,17 @@ namespace TS3ABotUnitTests
 			};
 			
 			// Assert: All properties should be accessible
-			Assert.AreEqual("avc1.64001F", format.vcodec);
-			Assert.AreEqual("mp4a.40.2", format.acodec);
-			Assert.AreEqual(128, format.abr);
-			Assert.AreEqual(44100, format.asr);
-			Assert.AreEqual(256, format.tbr);
-			Assert.AreEqual("18 - 640x360 (360p)", format.format);
-			Assert.AreEqual("18", format.format_id);
-			Assert.AreEqual("https://example.com/video.mp4", format.url);
-			Assert.AreEqual("mp4", format.ext);
-			Assert.AreEqual(640, format.width);
-			Assert.AreEqual(360, format.height);
+			Assert.That(format.vcodec, Is.EqualTo("avc1.64001F"));
+			Assert.That(format.acodec, Is.EqualTo("mp4a.40.2"));
+			Assert.That(format.abr, Is.EqualTo(128));
+			Assert.That(format.asr, Is.EqualTo(44100));
+			Assert.That(format.tbr, Is.EqualTo(256));
+			Assert.That(format.format, Is.EqualTo("18 - 640x360 (360p)"));
+			Assert.That(format.format_id, Is.EqualTo("18"));
+			Assert.That(format.url, Is.EqualTo("https://example.com/video.mp4"));
+			Assert.That(format.ext, Is.EqualTo("mp4"));
+			Assert.That(format.width, Is.EqualTo(640));
+			Assert.That(format.height, Is.EqualTo(360));
 		}
 
 		/// <summary>
@@ -307,10 +307,10 @@ namespace TS3ABotUnitTests
 			using var resolver = new YoutubeResolver(conf);
 			
 			// Assert: Should not throw - resolver creation succeeded
-			Assert.IsNotNull(resolver);
+			Assert.That(resolver, Is.Not.Null);
 			
 			// Verify the config value is accessible
-			Assert.AreEqual("", conf.CookieFile.Value);
+			Assert.That(conf.CookieFile.Value, Is.EqualTo(""));
 		}
 
 		/// <summary>
@@ -328,10 +328,10 @@ namespace TS3ABotUnitTests
 			using var resolver = new YoutubeResolver(conf);
 			
 			// Assert: Should not throw - resolver creation succeeded
-			Assert.IsNotNull(resolver);
+			Assert.That(resolver, Is.Not.Null);
 			
 			// Verify the config value is accessible
-			Assert.AreEqual("", conf.ExtractorArgs.Value);
+			Assert.That(conf.ExtractorArgs.Value, Is.EqualTo(""));
 		}
 
 		/// <summary>
@@ -356,7 +356,7 @@ namespace TS3ABotUnitTests
 			var conf = new ConfResolverYoutube();
 			Assert.DoesNotThrow(() => {
 				using var resolver = new YoutubeResolver(conf);
-				Assert.IsNotNull(resolver);
+				Assert.That(resolver, Is.Not.Null);
 			});
 		}
 	}

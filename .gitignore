@@ -257,4 +257,9 @@ publish-linux/
 yt-dlp
 cookies.txt
 ytdlp.sh
+<<<<<<< HEAD
 .cocoindex_code/**
+=======
+# CocoIndex Code (ccc)
+/.cocoindex_code/
+>>>>>>> 986766486cf736a895a4fd51493e22fcbc7460e8

@@ -14,6 +14,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -257,10 +258,9 @@ namespace TSLib
 			if (!match.Success)
 				return null;
 
-			IPAddress ipAddr;
 			if (match.Groups["ip"].Value == "localhost")
-				ipAddr = IPAddress.Loopback;
-			else if (!IPAddress.TryParse(match.Groups["ip"].Value, out ipAddr))
+				return new IPEndPoint(IPAddress.Loopback, defaultPort);
+			if (!IPAddress.TryParse(match.Groups["ip"].Value, out var ipAddr))
 				return null;
 
 			if (!match.Groups["port"].Success)
@@ -272,16 +272,15 @@ namespace TSLib
 			return new IPEndPoint(ipAddr, port);
 		}
 
+		private static readonly HttpClient NicknameHttpClient = new HttpClient();
 		private static async Task<string?> ResolveNickname(string nickname)
 		{
 			string result;
 			try
 			{
-				var request = WebRequest.Create(NicknameLookup + Uri.EscapeDataString(nickname));
-				using var respose = await request.GetResponseAsync().ConfigureAwait(false);
-				using var stream = respose.GetResponseStream();
-				using var reader = new StreamReader(stream, Tools.Utf8Encoder, false, (int)respose.ContentLength);
-				result = await reader.ReadToEndAsync().ConfigureAwait(false);
+				var response = await NicknameHttpClient.GetAsync(NicknameLookup + Uri.EscapeDataString(nickname)).ConfigureAwait(false);
+				response.EnsureSuccessStatusCode();
+				result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 			}
 			catch (Exception ex)
 			{
