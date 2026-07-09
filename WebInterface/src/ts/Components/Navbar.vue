@@ -80,7 +80,7 @@ import SiteSettingsModal from "../Modals/SiteSettingsModal.vue";
 export default Vue.extend({
 	data() {
 		return {
-			isDark: localStorage.getItem("theme") === "dark"
+			isDark: localStorage.getItem("theme") !== "light"
 		};
 	},
 	created() {

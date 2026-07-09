@@ -18,7 +18,7 @@ export default {
 	},
 	created() {
 		const theme = localStorage.getItem("theme");
-		if (theme === "dark") {
+		if (theme !== "light") {
 			document.documentElement.classList.add("theme-dark");
 		}
 	},
@@ -42,6 +42,19 @@ html.theme-dark {
 	body {
 		background-color: #121212 !important;
 		color: #e0e0e0 !important;
+	}
+
+	.notification {
+		background-color: #242424 !important;
+		color: #e0e0e0 !important;
+
+		.title {
+			color: #ffffff !important;
+		}
+
+		.subtitle {
+			color: #b5b5b5 !important;
+		}
 	}
 
 	.navbar {
