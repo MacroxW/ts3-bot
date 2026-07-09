@@ -66,15 +66,15 @@ namespace TS3AudioBot.CommandSystem
 		public CommandError Error { get; }
 
 		protected TeamSpeakErrorCommandException(CommandError error)
-			: base(CommandExceptionReason.MissingContext)
+			: base(CommandExceptionReason.CommandError)
 		{ Error = error; }
 
 		public TeamSpeakErrorCommandException(string message, CommandError error)
-			: base(message, CommandExceptionReason.MissingContext)
+			: base(message, CommandExceptionReason.CommandError)
 		{ Error = error; }
 
 		public TeamSpeakErrorCommandException(string message, Exception inner, CommandError error)
-			: base(message, inner, CommandExceptionReason.MissingContext)
+			: base(message, inner, CommandExceptionReason.CommandError)
 		{ Error = error; }
 	}
 

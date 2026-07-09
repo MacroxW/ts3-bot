@@ -1,22 +1,22 @@
 <template>
-	<section>
-		<b-field grouped>
-			<b-input icon="magnify" v-model="filter.text" placeholder="Filter..." expanded />
+	<section class="settings-page">
+		<div class="settings-toolbar">
+			<b-input icon="magnify" v-model="filter.text" placeholder="Buscar configuración..." expanded />
 
-			<b-field>
+			<b-field class="level-switch">
 				<b-radio-button
 					v-model="filter.level"
 					:native-value="SettLevel.Beginner"
 					type="is-success"
-				>Simple</b-radio-button>
+				>Básico</b-radio-button>
 				<b-radio-button
 					v-model="filter.level"
 					:native-value="SettLevel.Advanced"
 					type="is-warning"
-				>Advanced</b-radio-button>
-				<b-radio-button v-model="filter.level" :native-value="SettLevel.Expert" type="is-danger">Expert</b-radio-button>
+				>Avanzado</b-radio-button>
+				<b-radio-button v-model="filter.level" :native-value="SettLevel.Expert" type="is-danger">Experto</b-radio-button>
 			</b-field>
-		</b-field>
+		</div>
 
 		<settings-group label="General">
 			<settings-field :filter="filter" path="run" label="Conectar cuando Dixibot inicia">
@@ -47,14 +47,15 @@
 			</settings-field>
 			<settings-field :filter="filter" path="connect.address" label="Server address" grouped>
 				<b-input v-model="model.connect.address" expanded required></b-input>
-				<b-button class="control">Test (TODO)</b-button>
 			</settings-field>
 
 			<settings-field :filter="filter" path="connect.server_password" label="Server password">
 				<settings-password :filter="filter" v-model="model.connect.server_password" />
 			</settings-field>
 
-			<settings-field :filter="filter" path="connect.channel" label="Default channel">(TODO)</settings-field>
+			<settings-field :filter="filter" path="connect.channel" label="Canal predeterminado">
+				<b-input v-model="model.connect.channel" placeholder="Ruta del canal o /ID, por ejemplo /5" expanded></b-input>
+			</settings-field>
 
 			<settings-field :filter="filter" path="connect.channel_password" label="Channel password">
 				<settings-password :filter="filter" v-model="model.connect.channel_password" />
@@ -81,7 +82,7 @@
 				<div class="control is-expanded">
 					<b-slider v-model="model.audio.volume.default" :min="0" :max="100" lazy></b-slider>
 				</div>
-				<b-button class="control" @click="model.audio.volume.default = 42">Apply current volume (TODO)</b-button>
+				<b-button class="control" icon-left="volume-high" :loading="loadingCurrentVolume" @click="applyCurrentVolume">Usar volumen actual</b-button>
 			</settings-field>
 
 			<settings-field :filter="filter" label="New song volume" path="audio.volume" advanced>
@@ -94,12 +95,12 @@
 
 			<settings-field :filter="filter" label="Bitrate" path="audio.bitrate" grouped advanced>
 				<b-field>
-					<b-radio-button v-model="model.audio.bitrate" :native-value="16" type="is-danger">Very Poor</b-radio-button>
-					<b-radio-button v-model="model.audio.bitrate" :native-value="24" type="is-danger">Poor</b-radio-button>
-					<b-radio-button v-model="model.audio.bitrate" :native-value="32" type="is-warning">Okay</b-radio-button>
-					<b-radio-button v-model="model.audio.bitrate" :native-value="48" type="is-warning">Good</b-radio-button>
-					<b-radio-button v-model="model.audio.bitrate" :native-value="64" type="is-success">Very Good</b-radio-button>
-					<b-radio-button v-model="model.audio.bitrate" :native-value="96" type="is-success">Deluxe</b-radio-button>
+					<b-radio-button v-model="model.audio.bitrate" :native-value="16" type="is-danger">16</b-radio-button>
+					<b-radio-button v-model="model.audio.bitrate" :native-value="24" type="is-danger">24</b-radio-button>
+					<b-radio-button v-model="model.audio.bitrate" :native-value="32" type="is-warning">32</b-radio-button>
+					<b-radio-button v-model="model.audio.bitrate" :native-value="48" type="is-warning">48</b-radio-button>
+					<b-radio-button v-model="model.audio.bitrate" :native-value="64" type="is-success">64</b-radio-button>
+					<b-radio-button v-model="model.audio.bitrate" :native-value="96" type="is-success">96 kbps</b-radio-button>
 				</b-field>
 				<b-field expanded>
 					<b-slider v-model="model.audio.bitrate" :min="2" :max="128" :step="2" expanded></b-slider>
@@ -193,6 +194,8 @@ export default Vue.extend({
 			SettLevel,
 
 			versions: [] as IVersion[],
+			loadingCurrentVolume: false,
+			originalBotName: "",
 			filter: {
 				text: "",
 				level: Number(localStorage.filter_level ?? SettLevel.Beginner) as SettLevel,
@@ -236,6 +239,7 @@ export default Vue.extend({
 		if (!Util.check(this, res, "Failed to retrieve settings")) return;
 
 		this.model = res;
+		this.originalBotName = this.model.connect.name;
 
 		this.bindRecursive("", this.model);
 	},
@@ -263,6 +267,17 @@ export default Vue.extend({
 		}
 	},
 	methods: {
+		async applyCurrentVolume() {
+			if (!this.online) return;
+			this.loadingCurrentVolume = true;
+			try {
+				const res = await bot(cmd<number>("volume"), this.botId).get();
+				if (!Util.check(this, res, "No se pudo obtener el volumen actual")) return;
+				this.model.audio.volume.default = Math.round(res);
+			} finally {
+				this.loadingCurrentVolume = false;
+			}
+		},
 		requestModel(): Promise<Api<any>> {
 			if (this.online)
 				return bot(cmd<any>("settings", "get"), this.botId).get();
@@ -345,12 +360,17 @@ export default Vue.extend({
 			}
 		},
 		async botRename(name: string) {
+			if (name === this.originalBotName) {
+				this.$buefy.toast.open({ message: "El bot ya utiliza ese nombre", type: "is-info" });
+				return;
+			}
 			const res = await bot(
 				cmd<void>("bot", "name", name),
 				this.botId
 			).get();
 
 			if (!Util.check(this, res, "Failed to set name")) return;
+			this.originalBotName = name;
 		}
 	},
 	components: {
@@ -360,3 +380,7 @@ export default Vue.extend({
 	}
 });
 </script>
+
+<style lang="less">
+.settings-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) auto;align-items:center;gap:.75rem;margin-bottom:1rem;padding:.8rem;border:1px solid var(--line);border-radius:16px;background:var(--surface)}.settings-toolbar .field{margin:0}.settings-toolbar>.control{width:100%}.level-switch .field{flex-wrap:nowrap}.settings-page>.card{margin-bottom:.85rem}.settings-page>.card:last-child{margin-bottom:0}.settings-page .b-slider{margin:.35rem .25rem}.settings-page .b-radio.radio.button{min-height:38px;height:38px;padding:.45rem .7rem;font-size:.78rem}.settings-page .select,.settings-page .select select{width:100%}@media(max-width:720px){.settings-toolbar{grid-template-columns:1fr}.level-switch>.field{display:grid;grid-template-columns:repeat(3,1fr)}.level-switch .b-radio.radio.button{width:100%;justify-content:center}.settings-page>.card{margin-bottom:.7rem}}
+</style>

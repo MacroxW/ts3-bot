@@ -64,4 +64,5 @@ export default Vue.component("settings-field", {
 </script>
 
 <style lang="less">
+.settings-field{display:grid;grid-template-columns:minmax(150px,32%) minmax(0,1fr);align-items:center;gap:1rem;margin:0!important;padding:.7rem 0;border-bottom:1px solid var(--line)}.settings-field>.label{margin:0!important;color:var(--muted)!important;font-size:.78rem;line-height:1.3}.settings-field>.field-body{display:block;min-width:0}.settings-field>.field-body>.field{margin:0}.settings-field .field.is-grouped{display:flex;align-items:center;flex-wrap:wrap}.settings-field .field.is-grouped>.control.is-expanded{min-width:180px}.settings-field .b-slider{width:100%}@media(max-width:650px){.settings-field{grid-template-columns:1fr;gap:.45rem;padding:.75rem 0}.settings-field>.label{color:var(--text)!important}.settings-field .field.is-grouped>.control{width:100%}.settings-field .field.is-grouped>.control .button{width:100%}}
 </style>

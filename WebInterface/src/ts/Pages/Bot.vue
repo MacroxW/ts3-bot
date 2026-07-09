@@ -22,8 +22,6 @@
 								:props="{ playlist: '<none>' }"
 								:disabled="!online"
 							/>
-							<bot-nav-item label="History [WIP]" icon="history" page disabled />
-							<bot-nav-item label="Search [WIP]" icon="cloud-search" page disabled />
 						</ul>
 					</div>
 				</div>

@@ -226,7 +226,11 @@ namespace TS3AudioBot
 
 		public Task ChangeName(string name)
 			=> ts3FullClient.ChangeName(name).UnwrapThrow(e =>
-				(e == TsErrorCode.parameter_invalid_size ? strings.error_ts_invalid_name : null, false)
+				(e == TsErrorCode.parameter_invalid_size
+					? strings.error_ts_invalid_name
+					: e == TsErrorCode.client_nickname_inuse
+						? "The TeamSpeak nickname is already in use."
+						: null, false)
 			);
 
 		public Task<ClientList> GetCachedClientById(ClientId id) => ClientBufferRequest(client => client.ClientId == id);

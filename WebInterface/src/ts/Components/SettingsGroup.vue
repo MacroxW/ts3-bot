@@ -1,5 +1,5 @@
 <template>
-	<b-collapse v-show="is_visible" class="card" aria-id="settings_box">
+	<b-collapse v-show="is_visible" class="card settings-group" aria-id="settings_box">
 		<div
 			slot="trigger"
 			slot-scope="props"
@@ -42,3 +42,7 @@ export default Vue.component("settings-group", {
 	}
 });
 </script>
+
+<style lang="less">
+.settings-group{overflow:hidden;border-radius:16px!important}.settings-group .card-header{min-height:48px;align-items:center;background:transparent!important;box-shadow:none!important;border-bottom:1px solid var(--line)}.settings-group .card-header-title{padding:.8rem 1rem;font-size:.92rem}.settings-group .card-header-icon{width:46px;color:var(--muted)}.settings-group .card-content{padding:.35rem 1rem}.settings-group .content{margin:0}.settings-group .content>.settings-field:last-child{border-bottom:0}
+</style>

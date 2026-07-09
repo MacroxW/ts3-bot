@@ -67,6 +67,8 @@ export default Vue.component("play-controls", {
 		info: { type: Object as () => BotInfoSync, required: true }
 	},
 	async created() {
+		this.volume_old = this.info.volume;
+		this.setVolumeDebounced = debounce((value: number) => this.setVolume(value), 300, { maxWait: 700 });
 		this.playTick = new Timer(() => {
 			if (!this.info.song) {
 				this.playTick.stop();
@@ -103,6 +105,7 @@ export default Vue.component("play-controls", {
 
 			volume_old: 0,
 			muteToggleVolume: 0,
+			setVolumeDebounced: undefined! as (value: number) => void,
 
 			echoCounter: 0,
 			echoTick: undefined! as Timer,
@@ -169,11 +172,6 @@ export default Vue.component("play-controls", {
 			else if (this.info.volume <= 66) return "volume-medium";
 			else return "volume-high";
 		},
-		setVD(): Function {
-			return debounce(this.setVolume, 500, {
-				maxWait: 100
-			});
-		}
 	},
 	methods: {
 		async clickRepeat() {
@@ -297,7 +295,7 @@ export default Vue.component("play-controls", {
 	},
 	watch: {
 		"info.volume"(value: number) {
-			this.setVD(value);
+			if (value !== this.volume_old) this.setVolumeDebounced(value);
 		}
 	}
 });
@@ -305,4 +303,5 @@ export default Vue.component("play-controls", {
 
 <style lang="less">
 #playcontrols{left:0;right:0;bottom:0;z-index:30;padding:.75rem 1rem;background:linear-gradient(180deg,transparent,rgba(8,13,25,.18))}.player-shell{display:grid;grid-template-columns:minmax(170px,1fr) minmax(320px,2fr) minmax(170px,1fr);align-items:center;gap:1.25rem;max-width:1240px;min-height:76px;margin:auto;padding:.65rem 1rem;border:1px solid var(--line);border-radius:20px;background:var(--surface-solid);box-shadow:0 -12px 45px rgba(15,23,42,.18);backdrop-filter:blur(22px)}.track-meta{display:flex;align-items:center;gap:.75rem;min-width:0}.track-meta>div:last-child{display:flex;flex-direction:column;min-width:0}.track-meta strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text);font-size:.88rem}.track-meta span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:.7rem}.track-icon{display:grid;place-items:center;width:42px;height:42px;flex:none;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}.player-main{display:flex;flex-direction:column;gap:.25rem}.transport-controls{display:flex;align-items:center;justify-content:center;gap:.25rem}.player-button{min-width:36px!important;min-height:36px!important;width:36px;height:36px;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;color:var(--text)!important;box-shadow:none!important}.player-button:hover{background:rgba(109,93,252,.1)!important;color:var(--brand)!important;transform:none!important}.player-button.secondary-action{color:var(--muted)!important}.play-button{width:44px;height:44px;background:linear-gradient(135deg,var(--brand),#8b5cf6)!important;color:#fff!important;box-shadow:0 8px 20px rgba(109,93,252,.28)!important}.play-button:hover{color:#fff!important;transform:scale(1.05)!important}.timeline{display:grid;grid-template-columns:42px 1fr 42px;align-items:center;gap:.6rem;color:var(--muted);font-size:.68rem}.timeline>span:last-child{text-align:right}.timeline-slider,.volume-slider{min-width:0}.timeline .b-slider,.volume-slider .b-slider{margin:0}.volume-controls{display:flex;align-items:center;justify-content:flex-end;gap:.5rem}.volume-slider{width:100px}.volume-controls>span{width:34px;color:var(--muted);font-size:.68rem;text-align:right}@media(max-width:900px){.player-shell{grid-template-columns:1fr auto}.player-main{grid-column:1/-1;grid-row:1}.track-meta{grid-row:2}.volume-controls{grid-row:2}.timeline{margin-top:.2rem}}@media(max-width:600px){#playcontrols{padding:.45rem}.player-shell{min-height:68px;padding:.5rem .65rem;border-radius:16px}.track-meta,.volume-controls{display:none}.player-main{grid-column:1/-1;grid-row:auto}.transport-controls{gap:.5rem}.timeline{grid-template-columns:34px 1fr 34px}.secondary-action{display:none!important}}
+#playcontrols{position:fixed;pointer-events:none;padding:.6rem 1rem}.player-shell{pointer-events:auto}
 </style>

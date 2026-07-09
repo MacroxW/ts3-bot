@@ -19,8 +19,6 @@ export class Get {
 		site: Api<T>,
 		login: ApiAuth = this.AuthData,
 		ep: string = this.Endpoint): Promise<T | ApiErr> {
-		// TODO endpoint parameter
-
 		const requestData: RequestInit = {
 			method: "GET",
 			mode: "cors",
@@ -56,6 +54,11 @@ export class Get {
 		}
 
 		if (!response.ok) {
+			if (response.status === 401) {
+				window.localStorage.removeItem("api_auth");
+				Get.AuthData = ApiAuth.Anonymous;
+				window.location.hash = "/";
+			}
 			json._httpStatusCode = response.status;
 			return new ErrorObject(json);
 		} else {

@@ -1,10 +1,3 @@
-<!-- UNFINISHED -->
-
-<!-- TODO: Copy bot -->
-<!-- TODO: Save running bot -->
-<!-- TODO: Jump to settings -->
-<!-- TODO: Jump to dashboard -->
-
 <template>
   <div class="bots-page">
     <nav class="flow-nav" aria-label="Ruta de navegación">
@@ -171,31 +164,11 @@
             </button>
 
             <b-dropdown-item
-              v-show="false"
-              :disabled="props.row.Name == null"
-              aria-role="listitem"
-            >
-              <b-icon icon="content-copy" />
-              <span>Copy</span>
-            </b-dropdown-item>
-            <b-dropdown-item
-              v-show="false"
-              :disabled="props.row.Name == null"
-              aria-role="listitem"
-            >
-              <b-icon icon="pencil" />
-              <span>Rename</span>
-            </b-dropdown-item>
-            <b-dropdown-item
               v-if="props.row.Name"
               @click="askDeleteBot(props.row.Name)"
             >
               <b-icon icon="delete" type="is-danger" />
               <span>Delete</span>
-            </b-dropdown-item>
-            <b-dropdown-item v-show="false" v-else>
-              <b-icon icon="content-save" type="is-success" />
-              <span>Save</span>
             </b-dropdown-item>
           </b-dropdown>
         </div>
@@ -302,15 +275,9 @@ export default Vue.extend({
     async refresh() {
       const res = await cmd<CmdBotInfo[]>("bot", "list").get();
 
-      console.log("Bot list API response:", res);
-
-      if (!Util.check(this, res, "Error getting bot list")) {
-        console.log("Util.check failed");
-        return;
+		if (!Util.check(this, res, "Error getting bot list")) {
+		  return;
       }
-
-      console.log("Bot list data:", res);
-      console.log("Number of bots:", res.length);
 
       this.hasConnectingBots = false;
       for (const botInfo of res) {
@@ -321,9 +288,6 @@ export default Vue.extend({
       }
 
       this.bots = res;
-      console.log("this.bots set to:", this.bots);
-      console.log("botsFiltered:", this.botsFiltered);
-
       if (this.hasConnectingBots) this.ticker.start();
     },
     clearFilter() {
@@ -336,14 +300,14 @@ export default Vue.extend({
       else if (status == BotStatus.Offline) return "is-danger";
       else return "";
     },
-    async connectBot(address: string) {
-      const res = await cmd<CmdBotInfo>("bot", "connect", "to", address).get();
-      // TODO get info and jump to corrent page
-      if (!Util.check(this, res, "Error connecting bot")) {
+	  async connectBot(address: string) {
+		const res = await cmd<CmdBotInfo>("bot", "connect", "to", address).get();
+		if (!Util.check(this, res, "Error connecting bot")) {
         return;
       }
-      this.modalQuickConnect = false;
-      await this.refresh();
+		this.modalQuickConnect = false;
+		await this.refresh();
+		if (res.Id != null) this.$router.push({ name: "r_server", params: { id: res.Id.toString() } });
     },
     askDeleteBot(name: string) {
       this.interactBotName = name;
@@ -385,9 +349,9 @@ export default Vue.extend({
       await this.refresh();
     },
     async editBotServer(server: string, bot: CmdBotInfo) {
-      if (!bot.Name) {
-        // TODO: popup warning
-        return;
+		if (!bot.Name) {
+		  this.$buefy.toast.open({ message: "Este bot no tiene una configuración editable", type: "is-warning" });
+		  return;
       }
 
       const res = await cmd<void>(
@@ -413,24 +377,6 @@ export default Vue.extend({
     EditableText,
   },
 });
-
-// const res = await cmd<void>(
-// 	"settings",
-// 	"copy",
-// 	name,
-// 	i.target
-// ).get();
-// if (DisplayError.check(res, "Error copying bot")) {
-// 	await this.refresh();
-// }
-
-// const res = await bot(
-// 	cmd<void>("bot", "save", i.name),
-// 	botId
-// ).get();
-// if (DisplayError.check(res, "Error saving bot")) {
-// 	await this.refresh();
-// }
 </script>
 
 <style lang="less">
