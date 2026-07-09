@@ -197,4 +197,4 @@ matcher = "exact"
 #If you want to enable the webinterface.
 enabled = true
 #The webinterface folder to host. Leave empty to let the bot look for default locations.
-path = ""
+path = "WebInterface/dist"

@@ -62,7 +62,7 @@ module.exports = {
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			title: 'North Industries - TS3AudioBot',
+			title: 'Dixibot - TS3AudioBot',
 			template: 'src/html/index.html'
 		}),
 		new CopyPlugin({
