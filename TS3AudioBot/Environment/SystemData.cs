@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using TS3AudioBot.Helper;
@@ -133,7 +134,7 @@ namespace TS3AudioBot.Environment
 		private static PlatformVersion? GetNetCoreVersion()
 		{
 			var assembly = typeof(System.Runtime.GCSettings).GetTypeInfo().Assembly;
-			var assemblyPath = assembly.CodeBase?.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+			var assemblyPath = assembly.Location?.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
 			if (assemblyPath is null)
 				return null;
 			int netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");

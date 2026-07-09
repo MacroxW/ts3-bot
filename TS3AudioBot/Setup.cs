@@ -47,7 +47,7 @@ namespace TS3AudioBot
 			{
 				Console.WriteLine(HelpText.AutoBuild(parsedArgs, h =>
 				{
-					h.Heading = $"TS3AudioBot {SystemData.AssemblyData}";
+					h.Heading = $"KBTS3AudioBot {SystemData.AssemblyData}";
 					h.Copyright = "";
 					return HelpText.DefaultParsingErrorsHandler(parsedArgs, h);
 				}));
@@ -99,7 +99,7 @@ namespace TS3AudioBot
 				var configFileInfo = new FileInfo("NLog.config");
 				if (!configFileInfo.Exists)
 				{
-					using var configStream = Util.GetEmbeddedFile("TS3AudioBot.Resources.NLog.config")!;
+					using var configStream = Util.GetEmbeddedFile("KBTS3AudioBot.Resources.NLog.config")!;
 					using var configFileStream = configFileInfo.OpenWrite();
 					configStream.CopyTo(configFileStream);
 				}
@@ -127,7 +127,7 @@ namespace TS3AudioBot
 
 		public static void LogHeader()
 		{
-			Log.Info("[============ TS3AudioBot started =============]");
+			Log.Info("[============ KBTS3AudioBot started =============]");
 			Log.Info("[ Date: {0}", DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss", CultureInfo.InvariantCulture));
 			Log.Info("[ Version: {0}", SystemData.AssemblyData);
 			Log.Info("[ Build: {0}", SystemData.AssemblyData.BuildConfiguration);
