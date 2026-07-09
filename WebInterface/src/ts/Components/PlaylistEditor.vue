@@ -1,7 +1,7 @@
 
 <template>
-	<div>
-		<article class="media">
+	<div class="playlist-editor">
+		<article class="media playlist-editor-header">
 			<figure class="media-left">
 				<a
 					class="button is-large is-primary"
@@ -17,7 +17,7 @@
 						<edi-text :text="playlistData.Title" @onedit="setPlaylistTitle" />
 					</div>
 					<div class="is-size-4 is-flex">
-						<span>File: {{playlistData.Id}}</span>
+						<span>ID: {{playlistData.Id}}</span>
 					</div>
 				</div>
 			</div>
@@ -26,7 +26,7 @@
 					class="is-danger"
 					@click="$emit('deletePlaylist', playlistData)"
 					icon-left="delete"
-				>Delete</b-button>
+				>Eliminar</b-button>
 			</div>
 		</article>
 
@@ -63,7 +63,7 @@
 				<b-table-column label="  " width="0">
 					<div class="field is-grouped song-options">
 						<div class="control">
-							<b-tooltip label="Play from here">
+							<b-tooltip label="Reproducir desde aquí">
 								<hovercon icon="play" @click="itemPlay(playlistData.DisplayOffset + props.index)" />
 							</b-tooltip>
 						</div>
@@ -75,15 +75,15 @@
 								@click="itemRemove(playlistData.DisplayOffset + props.index)"
 							>
 								<b-icon icon="close-outline"></b-icon>
-								<span>Remove</span>
+								<span>Quitar</span>
 							</b-dropdown-item>
 							<b-dropdown-item aria-role="listitem">
 								<b-icon icon="book-open-page-variant"></b-icon>
-								<span>Move to page</span>
+								<span>Mover de página</span>
 							</b-dropdown-item>
 							<b-dropdown-item :has-link="props.row.AudioType != 'media'" aria-role="listitem">
 								<a :href="props.row.Link" target="_blank">
-									<b-icon icon="link"></b-icon>Source
+									<b-icon icon="link"></b-icon>Origen
 								</a>
 							</b-dropdown-item>
 						</b-dropdown>
@@ -94,26 +94,26 @@
 				<section class="section">
 					<div v-if="this.selectedPlaylist != none" class="content has-text-grey has-text-centered">
 						<p>¯\_(ツ)_/¯</p>
-						<p>Playlist is empty.</p>
-						<p>Drop a link here to add it...</p>
+						<p>La playlist está vacía.</p>
+						<p>Agregá un enlace para comenzar.</p>
 					</div>
 					<div v-else class="content has-text-grey has-text-centered">
-						<p>Select a playlist or create a new one to get started.</p>
+						<p>Seleccioná o creá una playlist para comenzar.</p>
 					</div>
 				</section>
 			</template>
 		</b-table>
 
-		<b-field>
+		<b-field class="playlist-add">
 			<b-input
 				@keyup.native.enter="addItemClick"
 				v-model="addSongLink"
 				type="text"
-				placeholder="Song link"
+				placeholder="Enlace de YouTube o audio"
 				expanded
 			/>
 			<p class="control">
-				<b-button type="is-success" icon-left="plus" @click="addItemClick">Add</b-button>
+				<b-button type="is-success" icon-left="plus" @click="addItemClick">Agregar</b-button>
 			</p>
 		</b-field>
 	</div>
@@ -377,4 +377,5 @@ export default Vue.component("playlist-editor", {
 	-khtml-user-drag: element;
 	-webkit-user-drag: element;
 }
+.playlist-editor-header{align-items:center;padding:1.25rem;margin-bottom:1.25rem;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}.playlist-editor-header .media-left .button{width:58px;height:58px}.playlist-editor-header .is-size-4{font-size:.85rem!important;color:var(--muted)}.playlist-editor .table-wrapper{margin-bottom:1rem}.playlist-add{padding:1rem;border:1px solid var(--line);border-radius:16px;background:var(--surface)}.song-options{gap:.45rem}@media(max-width:600px){.playlist-editor-header{align-items:flex-start;flex-wrap:wrap}.playlist-editor-header .media-right{width:100%;margin-left:0}.playlist-editor-header .media-right .button{width:100%}}
 </style>

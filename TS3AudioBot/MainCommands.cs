@@ -141,6 +141,12 @@ namespace TS3AudioBot
 			return tokenManager.GenerateToken(invoker.ClientUid.Value!, validSpan);
 		}
 
+		[Command("api create")]
+		public static string CommandApiCreate(TokenManager tokenManager, string uid)
+		{
+			return tokenManager.GenerateToken(uid, TimeSpan.FromDays(365));
+		}
+
 		[Command("bot avatar set")]
 		public static async Task CommandBotAvatarSet(Ts3Client ts3Client, string url)
 		{
@@ -1357,6 +1363,106 @@ namespace TS3AudioBot
 
 			// TODO: this can be done nicer by returning the errors and warnings from parsing
 			throw new CommandException(strings.cmd_rights_reload_error_parsing_file, CommandExceptionReason.CommandError);
+		}
+
+		[Command("rights get")]
+		public static JsonValue<string> CommandRightsGet(ConfRoot config)
+		{
+			string path = config.Rights.Path.Value;
+			if (!System.IO.File.Exists(path))
+				throw new CommandException("Permissions file not found.", CommandExceptionReason.CommandError);
+			return JsonValue.Create(System.IO.File.ReadAllText(path, Tools.Utf8Encoder));
+		}
+
+		public class RightsSetPayload
+		{
+			public string? Toml { get; set; }
+		}
+
+		[Command("rights set")]
+		public static async Task<JsonEmpty> CommandRightsSet(ExecutionInformation info, ConfRoot config, RightsManager rightsManager, ApiCall apiCall)
+		{
+			if (!await info.HasRights("cmd.rights.admin") && !await info.HasRights("*"))
+				throw new CommandException("Unauthorized to modify rights.", CommandExceptionReason.Unauthorized);
+
+			if (string.IsNullOrEmpty(apiCall.Body))
+				throw new CommandException("Request body cannot be empty.", CommandExceptionReason.CommandError);
+
+			string tomlContent;
+			try
+			{
+				var payload = Newtonsoft.Json.JsonConvert.DeserializeObject<RightsSetPayload>(apiCall.Body);
+				if (payload == null || string.IsNullOrEmpty(payload.Toml))
+					throw new Exception("Payload 'Toml' field is missing or empty.");
+				tomlContent = payload.Toml;
+			}
+			catch (Exception ex)
+			{
+				throw new CommandException($"Invalid payload: {ex.Message}", CommandExceptionReason.CommandError);
+			}
+
+			string path = config.Rights.Path.Value;
+
+			try
+			{
+				Nett.Toml.ReadString(tomlContent);
+			}
+			catch (Exception ex)
+			{
+				throw new CommandException($"Invalid TOML format: {ex.Message}", CommandExceptionReason.CommandError);
+			}
+
+			if (System.IO.File.Exists(path))
+			{
+				System.IO.File.Copy(path, path + ".bak", true);
+			}
+
+			try
+			{
+				System.IO.File.WriteAllText(path, tomlContent, Tools.Utf8Encoder);
+			}
+			catch (Exception ex)
+			{
+				throw new CommandException($"Failed to write file: {ex.Message}", CommandExceptionReason.CommandError);
+			}
+
+			if (!rightsManager.Reload())
+			{
+				if (System.IO.File.Exists(path + ".bak"))
+				{
+					System.IO.File.Copy(path + ".bak", path, true);
+					rightsManager.Reload();
+				}
+				throw new CommandException("Failed to reload permissions. Syntax or validation errors. Restored backup.", CommandExceptionReason.CommandError);
+			}
+
+			return new JsonEmpty("Permissions updated and reloaded successfully.");
+		}
+
+		[Command("rights commands")]
+		public static JsonArray<string> CommandRightsCommands(CommandManager commandManager)
+		{
+			var list = new List<string>();
+			TraverseCommands(string.Empty, commandManager.RootGroup, list);
+			list.Sort();
+			return new JsonArray<string>(list, l => string.Join(", ", l));
+		}
+
+		private static void TraverseCommands(string prefix, ICommand command, List<string> list)
+		{
+			if (command is CommandGroup group)
+			{
+				foreach (var kvp in group.Commands)
+				{
+					string nextPrefix = string.IsNullOrEmpty(prefix) ? kvp.Key : $"{prefix}.{kvp.Key}";
+					TraverseCommands(nextPrefix, kvp.Value, list);
+				}
+			}
+			else
+			{
+				if (!string.IsNullOrEmpty(prefix))
+					list.Add($"cmd.{prefix}");
+			}
 		}
 
 		[Command("rng")]

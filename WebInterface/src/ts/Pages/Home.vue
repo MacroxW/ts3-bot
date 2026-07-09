@@ -33,11 +33,7 @@
 			</div>
 		</section>
 
-		<div v-if="logged_in" class="quick-grid">
-				<router-link to="overview" class="quick-card">
-					<div class="quick-icon"><b-icon icon="view-dashboard" size="is-medium"></b-icon></div>
-					<div><strong>Estado del sistema</strong><span>Rendimiento y actividad en tiempo real</span></div><b-icon icon="arrow-right"></b-icon>
-				</router-link>
+		<div v-if="logged_in" class="quick-grid single">
 				<router-link to="bots" class="quick-card">
 					<div class="quick-icon teal"><b-icon icon="robot" size="is-medium"></b-icon></div>
 					<div><strong>Administrar bots</strong><span>Conectá, configurá y reproducí</span></div><b-icon icon="arrow-right"></b-icon>
@@ -107,6 +103,7 @@ export default Vue.extend({
 			try {
 				const res = await jmerge().get();
 				this.logged_in = Util.check(this, res, "No se pudieron validar las credenciales");
+				if (this.logged_in) window.dispatchEvent(new Event("dixibot-auth"));
 				if (!this.logged_in) this.authError = "UID o token incorrectos";
 				return this.logged_in;
 			} catch (_) {
@@ -118,7 +115,7 @@ export default Vue.extend({
 			}
 		},
 		async login() {
-			if ((this.logged_in || await this.authenticate())) this.$router.push("/overview");
+			if ((this.logged_in || await this.authenticate())) this.$router.push("/bots");
 		}
 	}
 });

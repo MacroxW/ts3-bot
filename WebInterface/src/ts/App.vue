@@ -43,7 +43,7 @@ html { background: var(--bg); transition: background .3s ease, color .3s ease; }
 body { min-height: 100vh; background: var(--bg); color: var(--text); }
 body:before { content:""; position:fixed; inset:0; pointer-events:none; background: radial-gradient(circle at 10% 5%,rgba(109,93,252,.14),transparent 28%),radial-gradient(circle at 90% 12%,rgba(20,184,166,.10),transparent 24%); }
 #app { min-height:100vh; position:relative; }
-.app-content { padding-top: 7.25rem; padding-bottom: 4rem; }
+.app-content { padding-top: 0; padding-bottom: 4rem; margin-top: 7.25rem; }
 .app-container { max-width: 1240px !important; }
 .title,.label,.modal-card-title,.card-header-title { color:var(--text) !important; }
 .subtitle,.help,.menu-label { color:var(--muted) !important; }
@@ -67,6 +67,8 @@ body:before { content:""; position:fixed; inset:0; pointer-events:none; backgrou
 .table th { color:var(--muted) !important; border-color:var(--line) !important; text-transform:uppercase; font-size:.72rem; letter-spacing:.08em; }
 .table td { border-color:var(--line) !important; vertical-align:middle !important; }
 .table.is-hoverable tbody tr:hover { background:rgba(109,93,252,.07) !important; }
+.table tr.is-clickable-bot { cursor:pointer; }
+.table tr.is-clickable-bot:hover td:first-child { box-shadow:inset 3px 0 0 var(--brand); }
 .tag { border-radius:999px !important; font-weight:700; padding-inline:.8rem; }
 .tabs a { color:var(--muted); border-color:var(--line) !important; }
 .tabs li.is-active a { color:var(--brand) !important; border-color:var(--brand) !important; }
@@ -76,7 +78,7 @@ body:before { content:""; position:fixed; inset:0; pointer-events:none; backgrou
 .app-container > * { animation:rise .55s ease both; }
 @media (prefers-reduced-motion:reduce) { *,*:before,*:after { scroll-behavior:auto !important; animation-duration:.01ms !important; transition-duration:.01ms !important; } }
 @media (max-width:768px) {
-	.app-content { padding:5.75rem 1rem 2.5rem; }
+	.app-content { padding:0 1rem 2.5rem; margin-top:5.75rem; }
 	.columns { margin-left:0; margin-right:0; }
 	.column { padding:.6rem 0; }
 	.buttons .button { flex:1; }

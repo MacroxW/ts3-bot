@@ -1,27 +1,24 @@
 <template>
-	<form @submit="trySubmit" action>
-		<div class="modal-card" style="width: auto">
+	<form class="playlist-modal-form" @submit.prevent="trySubmit">
+		<div class="modal-card playlist-modal-card">
 			<header class="modal-card-head">
-				<p class="modal-card-title">Create Bot</p>
+				<div class="modal-heading"><span class="modal-icon"><b-icon icon="playlist-plus"></b-icon></span><div><p class="modal-card-title">Nueva playlist</p><small>Creá una colección para organizar tu música.</small></div></div>
 			</header>
 			<section class="modal-card-body">
-				<b-field label="Playlist title">
-					<b-input v-model="title" placeholder="e.g. Carpenter Brut - Trilogy" required v-focus></b-input>
+				<b-field label="Nombre de la playlist">
+					<b-input v-model="title" icon="playlist-music" placeholder="Ej. Música para jugar" maxlength="80" required v-focus></b-input>
 				</b-field>
 				<b-field
-					label="(optional) File name"
+					label="Identificador del archivo (opcional)"
 					:type="is_taken ? 'is-danger' : ''"
-					:message="is_taken ? 'File aready exists. Please enter a name.' : ''"
+					:message="is_taken ? 'Ya existe una playlist con este identificador.' : 'Se completa automáticamente a partir del nombre.'"
 				>
-					<b-field>
-						<b-input v-model="id" :placeholder="autoId" expanded></b-input>
-						<span class="button is-static">.ts3ablist</span>
-					</b-field>
+					<div class="file-id-control"><b-input v-model="id" icon="file-outline" :placeholder="autoId || 'mi_playlist'" expanded></b-input><span>.ts3ablist</span></div>
 				</b-field>
 			</section>
 			<footer class="modal-card-foot">
-				<button class="button" type="button" @click="$parent.close()">Cancel</button>
-				<button class="button is-primary" type="submit">Create</button>
+				<button class="button" type="button" @click="$parent.close()">Cancelar</button>
+				<button class="button is-primary" type="submit" :disabled="autoId.length === 0 || is_taken"><b-icon icon="check"></b-icon><span>Crear playlist</span></button>
 			</footer>
 		</div>
 	</form>
@@ -66,3 +63,7 @@ export default Vue.extend({
 	}
 });
 </script>
+
+<style lang="less">
+.playlist-modal-card{width:min(92vw,560px)!important}.modal-heading{display:flex;align-items:center;gap:.9rem}.modal-heading small{display:block;color:var(--muted);margin-top:.2rem}.modal-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:13px;background:rgba(109,93,252,.12);color:var(--brand)}.file-id-control{display:flex;width:100%;align-items:stretch}.file-id-control>.control{flex:1}.file-id-control span{display:flex;align-items:center;padding:0 1rem;border:1px solid var(--line);border-left:0;border-radius:0 12px 12px 0;background:rgba(100,116,139,.08);color:var(--muted);font-size:.82rem;font-weight:700}.file-id-control .input{border-radius:12px 0 0 12px!important}.playlist-modal-card .modal-card-foot{justify-content:flex-end;gap:.65rem}@media(max-width:520px){.playlist-modal-card .modal-card-foot{flex-direction:column-reverse}.playlist-modal-card .modal-card-foot .button{width:100%;margin:0}.file-id-control span{padding:0 .6rem;font-size:.72rem}}
+</style>

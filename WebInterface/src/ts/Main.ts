@@ -15,6 +15,7 @@ import BotSettings from "./Pages/BotSettings.vue";
 import Home from "./Pages/Home.vue";
 import Overview from "./Pages/Overview.vue";
 import Playlists from "./Pages/Playlists.vue";
+import Permissions from "./Pages/Permissions.vue";
 import { Get } from "./Api";
 import { ApiAuth } from "./ApiAuth";
 
@@ -46,13 +47,15 @@ const router = new VueRouter({
 	routes: [
 		{ path: "/", component: Home },
 		//{ path: "/openapi", component: Commands },
-		{ path: "/overview", component: Overview },
-		{ path: "/bots", component: Bots, name: "r_bots" },
+		{ path: "/overview", redirect: "/bots" },
+		{ path: "/bots", component: Bots, name: "r_bots", meta: { requiresAuth: true } },
+		{ path: "/permissions", component: Permissions, name: "r_permissions", meta: { requiresAuth: true } },
 		{ path: "/bot", redirect: "/bots" },
 		{ path: "/bot/", redirect: "/bots" },
 		{
 			path: "/bot/:id",
 			component: Bot,
+			meta: { requiresAuth: true },
 			props: { online: true },
 			children: [
 				{ path: "", redirect: { name: "r_server" } },
@@ -76,6 +79,7 @@ const router = new VueRouter({
 		},
 		{
 			path: "/bot_offline/:name", component: Bot,
+			meta: { requiresAuth: true },
 			props: { online: false },
 			children: [
 				{
@@ -88,6 +92,13 @@ const router = new VueRouter({
 		},
 		{ path: "*", redirect: "/" },
 	]
+});
+
+router.beforeEach((to, from, next) => {
+	const auth = window.localStorage.getItem("api_auth") || "";
+	const authenticated = auth.includes(":") && auth.split(":")[1].length > 0;
+	if (to.matched.some(route => route.meta.requiresAuth) && !authenticated) next("/");
+	else next();
 });
 
 export default new Vue({

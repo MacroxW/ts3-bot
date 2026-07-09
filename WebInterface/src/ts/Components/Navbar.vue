@@ -9,24 +9,17 @@
 			><span class="brand-mark"><b-icon icon="waveform"></b-icon></span><span>Dixi<b>bot</b></span></b-navbar-item>
 		</template>
 		<template slot="start">
-			<b-navbar-item tag="router-link" :to="{ path: '/overview' }" exact-active-class="is-active">
-				<b-icon icon="view-dashboard"></b-icon>
-				<span>Overview</span>
-			</b-navbar-item>
-			<b-navbar-item tag="router-link" :to="{ path: '/bots' }" active-class="is-active">
+			<b-navbar-item v-if="authenticated" tag="router-link" :to="{ path: '/bots' }" active-class="is-active">
 				<b-icon icon="robot"></b-icon>
 				<span>Bots</span>
+			</b-navbar-item>
+			<b-navbar-item v-if="authenticated" tag="router-link" :to="{ path: '/permissions' }" active-class="is-active">
+				<b-icon icon="shield-lock"></b-icon>
+				<span>Permisos</span>
 			</b-navbar-item>
 		</template>
 
 		<template slot="end">
-			<b-tooltip label="Visit our Project" position="is-bottom">
-				<b-navbar-item tag="a" href="https://github.com/MacroxW/ts3-bot" target="_blank">
-					<b-icon icon="github-circle"></b-icon>
-					<span class="is-hidden-desktop">Github</span>
-				</b-navbar-item>
-			</b-tooltip>
-
 			<b-tooltip label="Report a bug" position="is-bottom">
 				<b-navbar-item
 					tag="a"
@@ -79,14 +72,25 @@ import SiteSettingsModal from "../Modals/SiteSettingsModal.vue";
 
 export default Vue.extend({
 	data() {
+		const auth = localStorage.getItem("api_auth") || "";
 		return {
-			isDark: localStorage.getItem("theme") !== "light"
+			isDark: localStorage.getItem("theme") !== "light",
+			authenticated: auth.includes(":") && auth.split(":")[1].length > 0
 		};
 	},
 	created() {
 		this.applyTheme();
+		window.addEventListener("dixibot-auth", this.syncAuth);
+	},
+	destroyed() {
+		window.removeEventListener("dixibot-auth", this.syncAuth);
 	},
 	methods: {
+		hasAuth(): boolean {
+			const auth = localStorage.getItem("api_auth") || "";
+			return auth.includes(":") && auth.split(":")[1].length > 0;
+		},
+		syncAuth() { this.authenticated = this.hasAuth(); },
 		openSiteSettings() {
 			this.$buefy.modal.open({
 				parent: this,

@@ -77,6 +77,8 @@
       :hoverable="true"
       :paginated="true"
       :per-page="10"
+	  :row-class="rowClass"
+	  @click="openBot"
     >
       <b-table-column field="Id" label="ID" width="40" numeric v-slot="props">
         <b-icon
@@ -86,7 +88,7 @@
         {{ props.row ? props.row.Id : "" }}
       </b-table-column>
 	  <b-table-column field="Name" label="Bot" v-slot="props">
-		<router-link v-if="props.row && props.row.Id != null" class="bot-name-link" :to="{ name: 'r_server', params: { id: props.row.Id } }"><b-icon icon="robot" size="is-small"></b-icon><strong>{{ props.row.Name }}</strong></router-link>
+		<span v-if="props.row && props.row.Id != null" class="bot-name-link"><b-icon icon="robot" size="is-small"></b-icon><strong>{{ props.row.Name }}</strong></span>
 		<span v-else>{{ props.row ? props.row.Name : "" }}</span>
 	  </b-table-column>
       <b-table-column field="Server" label="Server" v-slot="props">
@@ -105,7 +107,7 @@
         >
       </b-table-column>
 	  <b-table-column label="Acciones" width="240" v-slot="props">
-        <div v-if="props.row" class="bot-actions">
+		<div v-if="props.row" class="bot-actions" @click.stop>
           <b-tooltip
             v-if="props.row.Id == null"
             class="control"
@@ -291,6 +293,12 @@ export default Vue.extend({
     this.ticker.stop();
   },
   methods: {
+	openBot(row: CmdBotInfo) {
+	  if (row && row.Id != null) this.$router.push({ name: "r_server", params: { id: row.Id.toString() } });
+	},
+	rowClass(row: CmdBotInfo) {
+	  return row && row.Id != null ? "is-clickable-bot" : "";
+	},
     async refresh() {
       const res = await cmd<CmdBotInfo[]>("bot", "list").get();
 
