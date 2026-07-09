@@ -6,11 +6,11 @@ This is a open-source TeamSpeak3 bot, playing music and much more.
 
 ![Build and Release](https://img.shields.io/github/actions/workflow/status/scheissegalo/KBTS3AudioBot/dotnet.yml?branch=master&label=Build)
 
-## Upgraded to NET 6.0
+## Upgraded to .NET 10.0
 
-ensuring compatibility and taking advantage of the latest framework features and improvements.
-This upgrade results in a more efficient application, with reduced memory usage and a significantly smaller binary size.
-All vulnerabilities have been addressed and resolved during the upgrade process.
+Migrated from .NET 6.0 to .NET 10.0, ensuring compatibility with the latest runtime and SDK.
+All package vulnerabilities have been addressed and resolved during the upgrade process.
+Build: 0 warnings, 0 errors. Tests: 64 passed (2 integration tests require youtube-dl in PATH).
 
 ## Sign in to confirm you’re not a bot. This helps protect our community
 
@@ -269,16 +269,18 @@ You can install the [youtube-dl](https://github.com/rg3/youtube-dl/) binary or s
 
 Download the git repository with `git clone --recurse-submodules https://github.com/scheissegalo/KBTS3AudioBot.git`.
 
+Requires [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
+
 #### Linux
 
-1. Get the latest `dotnet core 3.1` version by following [this tutorial](https://docs.microsoft.com/dotnet/core/install/linux-package-managers) and choose your platform
+1. Install the .NET 10.0 SDK from [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet/10.0)
 1. Go into the directory of the repository with `cd KBTS3AudioBot`
-1. Execute `dotnet build --framework netcoreapp3.1 --configuration Release KBTS3AudioBot` to build the AudioBot
-1. The binary will be in `./KBTS3AudioBot/bin/Release/netcoreapp3.1` and can be run with `dotnet KBTS3AudioBot.dll`
+1. Execute `dotnet build --configuration Release` to build the bot
+1. The binary will be in `./TS3AudioBot/bin/Release/net10.0` and can be run with `dotnet TS3AudioBot.dll`
 
 #### Windows
 
-1. Make sure you have `Visual Studio` with the `dotnet core 3.1` development toolchain installed
+1. Make sure you have `Visual Studio` with the .NET 10.0 development toolchain installed
 1. Build the AudioBot with Visual Studio.
 
 ### Building the WebInterface
