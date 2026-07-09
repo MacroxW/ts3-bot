@@ -105,16 +105,14 @@ namespace TSLib.Messages
 
 			var ss = new SpanSplitter<byte>();
 			ss.First(line, AsciiSpace);
-			var key = ReadOnlySpan<byte>.Empty;
-			var value = ReadOnlySpan<byte>.Empty;
 			try
 			{
 				do
 				{
 					var param = ss.Trim(line);
 					var kvpSplitIndex = param.IndexOf(AsciiEquals);
-					key = kvpSplitIndex >= 0 ? param.Slice(0, kvpSplitIndex) : ReadOnlySpan<byte>.Empty;
-					value = kvpSplitIndex <= param.Length - 1 ? param.Slice(kvpSplitIndex + 1) : ReadOnlySpan<byte>.Empty;
+					var key = kvpSplitIndex >= 0 ? param.Slice(0, kvpSplitIndex) : ReadOnlySpan<byte>.Empty;
+					var value = kvpSplitIndex <= param.Length - 1 ? param.Slice(kvpSplitIndex + 1) : ReadOnlySpan<byte>.Empty;
 
 					if (!key.IsEmpty)
 					{
@@ -140,13 +138,13 @@ namespace TSLib.Messages
 
 					if (!ss.HasNext)
 						break;
-					line = ss.Next(line);
+					ss = line;
 				} while (line.Length > 0);
 				return true;
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, "Deserialization format error. Data: class:{0} field:{1} value:{2} msg:{3}", qm.GetType().Name, key.NewUtf8String(), value.NewUtf8String(), line.NewUtf8String());
+				Log.Error(ex, "Deserialization format error. Data: class:{0} msg:{1}", qm.GetType().Name, line.NewUtf8String());
 				return false;
 			}
 		}
