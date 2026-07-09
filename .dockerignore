@@ -1,0 +1,16 @@
+.git
+.github
+.idea
+.vscode
+bin/
+obj/
+publish/
+publish_test/
+node_modules/
+WebInterface/node_modules/
+WebInterface/dist/
+bots/
+logs/
+ts3audiobot.db
+ts3audiobot.db-journal
+rights.toml.bak

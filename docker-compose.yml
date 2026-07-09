@@ -1,0 +1,11 @@
+services:
+  dixibot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dixibot
+    restart: unless-stopped
+    ports:
+      - "58913:58913"
+    volumes:
+      - ./data:/data
