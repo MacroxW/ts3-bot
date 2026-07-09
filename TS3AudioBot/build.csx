@@ -16,12 +16,12 @@ string buildConfig = Args.Count > 1 ? Args[1] : "Debug";
 //string buildConfig = Args[1];
 // TODO Get build number and increment!!!!!!!!!!
 
-string solutionRoot = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+string solutionRoot = Directory.GetCurrentDirectory();
 string writeFullVersionFile2 = Path.Combine(solutionRoot, "build_number.txt");
 
 //Console.WriteLine($"File Path: {writeFullVersionFile2}");
 
-string buildFile = "build_number.txt";
+string buildFile = writeFullVersionFile2;
 string branchName = "master"; // Default branch
 string commitSha = "unknown"; // Default SHA
 string major = "0";

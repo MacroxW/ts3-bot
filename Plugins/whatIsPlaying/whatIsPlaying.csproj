@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition="'$(ExcludePlugins)' == 'true'">
@@ -15,7 +15,7 @@
     <ItemGroup>
       <PluginFiles Include="$(TargetDir)$(TargetName).dll" />
     </ItemGroup>
-    <Message Text="Copying @(PluginFiles) to $(SolutionDir)TS3AudioBot\bin\Debug\net6.0\Plugins\" Importance="high" />
-    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(SolutionDir)TS3AudioBot\bin\Debug\net6.0\Plugins\" />
+    <Message Text="Copying @(PluginFiles) to $(SolutionDir)TS3AudioBot\bin\Debug\net10.0\Plugins\" Importance="high" />
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(SolutionDir)TS3AudioBot\bin\Debug\net10.0\Plugins\" />
   </Target>
 </Project>

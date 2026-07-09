@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition="'$(ExcludePlugins)' == 'true'">
     <Build>false</Build>
@@ -60,15 +60,15 @@
     <ItemGroup>
       <PluginFiles Include="$(TargetDir)$(TargetName).dll" />
     </ItemGroup>
-    <Message Text="Copying @(PluginFiles) to $(SolutionDir)TS3AudioBot\bin\Debug\net6.0\Plugins\" Importance="high" />
-    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(SolutionDir)TS3AudioBot\bin\Debug\net6.0\Plugins\" />
+    <Message Text="Copying @(PluginFiles) to $(SolutionDir)TS3AudioBot\bin\Debug\net10.0\Plugins\" Importance="high" />
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(SolutionDir)TS3AudioBot\bin\Debug\net10.0\Plugins\" />
 
     <!-- Copy Languages Folder -->
     <ItemGroup>
       <LanguageFiles Include="languages\**\*" />
     </ItemGroup>
-    <Message Text="Copying @(LanguageFiles) to $(SolutionDir)TS3AudioBot\bin\Debug\net6.0\Languages\" Importance="high" />
-    <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(SolutionDir)TS3AudioBot\bin\Debug\net6.0\Languages\" />
+    <Message Text="Copying @(LanguageFiles) to $(SolutionDir)TS3AudioBot\bin\Debug\net10.0\Languages\" Importance="high" />
+    <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(SolutionDir)TS3AudioBot\bin\Debug\net10.0\Languages\" />
     
   </Target>
   

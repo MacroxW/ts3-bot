@@ -42,16 +42,16 @@ namespace TS3ABotUnitTests
 			var result = await YoutubeDlHelper.GetSingleVideo(WorkingVideoId);
 
 			// Assert
-			Assert.IsNotNull(result, "yt-dlp should return video data");
-			Assert.IsNotNull(result.formats, "Video should have formats");
-			Assert.IsTrue(result.formats.Length > 0, "Video should have at least one format");
+			Assert.That(result, Is.Not.Null, "yt-dlp should return video data");
+			Assert.That(result.formats, Is.Not.Null, "Video should have formats");
+			Assert.That(result.formats.Length, Is.GreaterThan(0), "Video should have at least one format");
 
 			// Test enhanced format selection
 			var selectedFormat = YoutubeDlHelper.FilterBestEnhanced(result.formats);
 
-			Assert.IsNotNull(selectedFormat, "FilterBestEnhanced should select a format");
-			Assert.IsNotNull(selectedFormat.url, "Selected format should have a URL");
-			Assert.AreNotEqual("none", selectedFormat.acodec, "Selected format should have audio");
+			Assert.That(selectedFormat, Is.Not.Null, "FilterBestEnhanced should select a format");
+			Assert.That(selectedFormat.url, Is.Not.Null, "Selected format should have a URL");
+			Assert.That(selectedFormat.acodec, Is.Not.EqualTo("none"), "Selected format should have audio");
 
 			// Log the selected format details
 			Console.WriteLine($"Selected format: {selectedFormat.format_id}");
@@ -74,16 +74,16 @@ namespace TS3ABotUnitTests
 			var result = await YoutubeDlHelper.GetSingleVideo(PreviouslyNonWorkingVideoId);
 
 			// Assert
-			Assert.IsNotNull(result, "yt-dlp should return video data");
-			Assert.IsNotNull(result.formats, "Video should have formats");
-			Assert.IsTrue(result.formats.Length > 0, "Video should have at least one format");
+			Assert.That(result, Is.Not.Null, "yt-dlp should return video data");
+			Assert.That(result.formats, Is.Not.Null, "Video should have formats");
+			Assert.That(result.formats.Length, Is.GreaterThan(0), "Video should have at least one format");
 
 			// Test enhanced format selection
 			var selectedFormat = YoutubeDlHelper.FilterBestEnhanced(result.formats);
 
-			Assert.IsNotNull(selectedFormat, "FilterBestEnhanced should select a format even with null bitrates");
-			Assert.IsNotNull(selectedFormat.url, "Selected format should have a URL");
-			Assert.AreNotEqual("none", selectedFormat.acodec, "Selected format should have audio");
+			Assert.That(selectedFormat, Is.Not.Null, "FilterBestEnhanced should select a format even with null bitrates");
+			Assert.That(selectedFormat.url, Is.Not.Null, "Selected format should have a URL");
+			Assert.That(selectedFormat.acodec, Is.Not.EqualTo("none"), "Selected format should have audio");
 
 			// Log the selected format details
 			Console.WriteLine($"Selected format: {selectedFormat.format_id}");
@@ -137,9 +137,9 @@ namespace TS3ABotUnitTests
 			var selected = YoutubeDlHelper.FilterBestEnhanced(formats);
 
 			// Assert
-			Assert.IsNotNull(selected, "Should select a format");
-			Assert.AreEqual("93", selected.format_id, "Should select format 93 (AAC-LC with lowest resolution among AAC-LC formats)");
-			Assert.IsTrue(selected.acodec.Contains("mp4a.40.2"), "Should prefer AAC-LC codec");
+			Assert.That(selected, Is.Not.Null, "Should select a format");
+			Assert.That(selected.format_id, Is.EqualTo("93"), "Should select format 93 (AAC-LC with lowest resolution among AAC-LC formats)");
+			Assert.That(selected.acodec.Contains("mp4a.40.2"), Is.True, "Should prefer AAC-LC codec");
 		}
 
 		[Test]
@@ -147,23 +147,23 @@ namespace TS3ABotUnitTests
 		public void TestHlsManifestDetection()
 		{
 			// Arrange & Act & Assert
-			Assert.IsTrue(YoutubeDlHelper.IsHlsManifest("https://manifest.googlevideo.com/api/manifest/hls_playlist/test"),
-				"Should detect manifest.googlevideo.com URLs");
+			Assert.That(YoutubeDlHelper.IsHlsManifest("https://manifest.googlevideo.com/api/manifest/hls_playlist/test"),
+				Is.True, "Should detect manifest.googlevideo.com URLs");
 
-			Assert.IsTrue(YoutubeDlHelper.IsHlsManifest("https://example.com/video.m3u8"),
-				"Should detect .m3u8 URLs");
+			Assert.That(YoutubeDlHelper.IsHlsManifest("https://example.com/video.m3u8"),
+				Is.True, "Should detect .m3u8 URLs");
 
-			Assert.IsTrue(YoutubeDlHelper.IsHlsManifest("https://example.com/hls_playlist/video"),
-				"Should detect hls_playlist in URL");
+			Assert.That(YoutubeDlHelper.IsHlsManifest("https://example.com/hls_playlist/video"),
+				Is.True, "Should detect hls_playlist in URL");
 
-			Assert.IsFalse(YoutubeDlHelper.IsHlsManifest("https://example.com/video.mp4"),
-				"Should not detect regular video URLs");
+			Assert.That(YoutubeDlHelper.IsHlsManifest("https://example.com/video.mp4"),
+				Is.False, "Should not detect regular video URLs");
 
-			Assert.IsFalse(YoutubeDlHelper.IsHlsManifest(null),
-				"Should handle null URLs");
+			Assert.That(YoutubeDlHelper.IsHlsManifest(null),
+				Is.False, "Should handle null URLs");
 
-			Assert.IsFalse(YoutubeDlHelper.IsHlsManifest(""),
-				"Should handle empty URLs");
+			Assert.That(YoutubeDlHelper.IsHlsManifest(""),
+				Is.False, "Should handle empty URLs");
 		}
 
 		[Test]
@@ -177,8 +177,8 @@ namespace TS3ABotUnitTests
 			var result = YoutubeDlHelper.TransformYtdlError(errorOutput);
 
 			// Assert
-			Assert.IsTrue(result.Contains("timed out"), "Should detect timeout errors");
-			Assert.IsTrue(result.Contains("try again"), "Should suggest retrying");
+			Assert.That(result.Contains("timed out"), Is.True, "Should detect timeout errors");
+			Assert.That(result.Contains("try again"), Is.True, "Should suggest retrying");
 		}
 
 		[Test]
@@ -192,8 +192,8 @@ namespace TS3ABotUnitTests
 			var result = YoutubeDlHelper.TransformYtdlError(errorOutput);
 
 			// Assert
-			Assert.IsTrue(result.Contains("not found") || result.Contains("unavailable"), 
-				"Should detect video unavailable errors");
+			Assert.That(result.Contains("not found") || result.Contains("unavailable"), 
+				Is.True, "Should detect video unavailable errors");
 		}
 
 		[Test]
@@ -207,8 +207,8 @@ namespace TS3ABotUnitTests
 			var result = YoutubeDlHelper.TransformYtdlError(errorOutput);
 
 			// Assert
-			Assert.IsTrue(result.Contains("authentication") || result.Contains("cookie"), 
-				"Should detect authentication errors and suggest cookie configuration");
+			Assert.That(result.Contains("authentication") || result.Contains("cookie"), 
+				Is.True, "Should detect authentication errors and suggest cookie configuration");
 		}
 
 		[Test]
@@ -243,7 +243,7 @@ namespace TS3ABotUnitTests
 			var selectedAac = YoutubeDlHelper.FilterBestEnhanced(formatsAacComparison);
 
 			// Assert
-			Assert.AreEqual("2", selectedAac.format_id, "Should prefer AAC-LC over HE-AAC");
+			Assert.That(selectedAac.format_id, Is.EqualTo("2"), "Should prefer AAC-LC over HE-AAC");
 
 			// Arrange - Opus vs AAC-LC (both high quality)
 			var formatsOpusComparison = new[]
@@ -272,7 +272,7 @@ namespace TS3ABotUnitTests
 			// Assert
 			// Both Opus and AAC-LC have quality 3, so either could be selected
 			// The important thing is that a format is selected
-			Assert.IsNotNull(selectedOpus, "Should select a format when both codecs are high quality");
+			Assert.That(selectedOpus, Is.Not.Null, "Should select a format when both codecs are high quality");
 		}
 
 		[Test]
@@ -306,7 +306,7 @@ namespace TS3ABotUnitTests
 			var selected = YoutubeDlHelper.FilterBestEnhanced(formats);
 
 			// Assert
-			Assert.AreEqual("audio", selected.format_id, "Should prefer audio-only format over combined when codec is the same");
+			Assert.That(selected.format_id, Is.EqualTo("audio"), "Should prefer audio-only format over combined when codec is the same");
 		}
 
 		[Test]
@@ -352,7 +352,7 @@ namespace TS3ABotUnitTests
 			var selected = YoutubeDlHelper.FilterBestEnhanced(formats);
 
 			// Assert
-			Assert.AreEqual("360p", selected.format_id, 
+			Assert.That(selected.format_id, Is.EqualTo("360p"), 
 				"Should prefer lowest resolution combined stream to minimize bandwidth for audio playback");
 		}
 
@@ -439,21 +439,21 @@ namespace TS3ABotUnitTests
 			var selected3 = YoutubeDlHelper.FilterBestEnhanced(video3Formats);
 
 			// Assert - All videos should select the same format_id (consistent logic)
-			Assert.IsNotNull(selected1, "Video 1 should have a selected format");
-			Assert.IsNotNull(selected2, "Video 2 should have a selected format");
-			Assert.IsNotNull(selected3, "Video 3 should have a selected format");
+			Assert.That(selected1, Is.Not.Null, "Video 1 should have a selected format");
+			Assert.That(selected2, Is.Not.Null, "Video 2 should have a selected format");
+			Assert.That(selected3, Is.Not.Null, "Video 3 should have a selected format");
 
-			Assert.AreEqual(selected1.format_id, selected2.format_id, 
+			Assert.That(selected1.format_id, Is.EqualTo(selected2.format_id), 
 				"Videos 1 and 2 should select the same format_id");
-			Assert.AreEqual(selected2.format_id, selected3.format_id, 
+			Assert.That(selected2.format_id, Is.EqualTo(selected3.format_id), 
 				"Videos 2 and 3 should select the same format_id");
 
 			// All should prefer direct URL over HLS
-			Assert.IsFalse(YoutubeDlHelper.IsHlsManifest(selected1.url), 
+			Assert.That(YoutubeDlHelper.IsHlsManifest(selected1.url), Is.False, 
 				"Video 1 should select direct URL");
-			Assert.IsFalse(YoutubeDlHelper.IsHlsManifest(selected2.url), 
+			Assert.That(YoutubeDlHelper.IsHlsManifest(selected2.url), Is.False, 
 				"Video 2 should select direct URL");
-			Assert.IsFalse(YoutubeDlHelper.IsHlsManifest(selected3.url), 
+			Assert.That(YoutubeDlHelper.IsHlsManifest(selected3.url), Is.False, 
 				"Video 3 should select direct URL");
 
 			Console.WriteLine($"Consistent format selection verified: All videos selected format {selected1.format_id}");
@@ -547,10 +547,10 @@ namespace TS3ABotUnitTests
 			{
 				var selected = YoutubeDlHelper.FilterBestEnhanced(testCase.Formats);
 
-				Assert.IsNotNull(selected, $"{testCase.Name} should have a selected format");
-				Assert.AreEqual("direct", selected.format_id, 
+				Assert.That(selected, Is.Not.Null, $"{testCase.Name} should have a selected format");
+				Assert.That(selected.format_id, Is.EqualTo("direct"), 
 					$"{testCase.Name} should select direct URL format");
-				Assert.IsFalse(YoutubeDlHelper.IsHlsManifest(selected.url), 
+				Assert.That(YoutubeDlHelper.IsHlsManifest(selected.url), Is.False, 
 					$"{testCase.Name} should not select HLS manifest");
 
 				Console.WriteLine($"{testCase.Name}: Correctly prioritized direct URL");
@@ -588,14 +588,14 @@ namespace TS3ABotUnitTests
 			// Act & Assert - All HLS URLs should be detected consistently
 			foreach (var url in hlsUrls)
 			{
-				Assert.IsTrue(YoutubeDlHelper.IsHlsManifest(url), 
+				Assert.That(YoutubeDlHelper.IsHlsManifest(url), Is.True, 
 					$"Should consistently detect HLS URL: {url}");
 			}
 
 			// All non-HLS URLs should be rejected consistently
 			foreach (var url in nonHlsUrls)
 			{
-				Assert.IsFalse(YoutubeDlHelper.IsHlsManifest(url), 
+				Assert.That(YoutubeDlHelper.IsHlsManifest(url), Is.False, 
 					$"Should consistently reject non-HLS URL: {url}");
 			}
 
@@ -651,8 +651,8 @@ namespace TS3ABotUnitTests
 			{
 				var selected = YoutubeDlHelper.FilterBestEnhanced(testCase.Formats);
 
-				Assert.IsNotNull(selected, $"{testCase.Name} should select a format");
-				Assert.IsTrue(selected.acodec.Contains(testCase.ExpectedCodec), 
+				Assert.That(selected, Is.Not.Null, $"{testCase.Name} should select a format");
+				Assert.That(selected.acodec.Contains(testCase.ExpectedCodec), Is.True, 
 					$"{testCase.Name} should consistently prefer {testCase.ExpectedCodec} codec. Got: {selected.acodec}");
 
 				Console.WriteLine($"{testCase.Name}: Correctly selected {selected.acodec}");
@@ -694,8 +694,8 @@ namespace TS3ABotUnitTests
 			foreach (var error in timeoutErrors)
 			{
 				var result = YoutubeDlHelper.TransformYtdlError(error);
-				Assert.IsTrue(result.ToLowerInvariant().Contains("timeout") || 
-				              result.ToLowerInvariant().Contains("timed out"), 
+				Assert.That(result.ToLowerInvariant().Contains("timeout") || 
+				              result.ToLowerInvariant().Contains("timed out"), Is.True, 
 					$"Should consistently handle timeout error: {error}");
 			}
 
@@ -703,9 +703,9 @@ namespace TS3ABotUnitTests
 			foreach (var error in unavailableErrors)
 			{
 				var result = YoutubeDlHelper.TransformYtdlError(error);
-				Assert.IsTrue(result.ToLowerInvariant().Contains("not found") || 
+				Assert.That(result.ToLowerInvariant().Contains("not found") || 
 				              result.ToLowerInvariant().Contains("unavailable") ||
-				              result.ToLowerInvariant().Contains("removed"), 
+				              result.ToLowerInvariant().Contains("removed"), Is.True, 
 					$"Should consistently handle unavailable error: {error}");
 			}
 
@@ -713,10 +713,10 @@ namespace TS3ABotUnitTests
 			foreach (var error in authErrors)
 			{
 				var result = YoutubeDlHelper.TransformYtdlError(error);
-				Assert.IsTrue(result.ToLowerInvariant().Contains("authentication") || 
+				Assert.That(result.ToLowerInvariant().Contains("authentication") || 
 				              result.ToLowerInvariant().Contains("cookie") ||
 				              result.ToLowerInvariant().Contains("login") ||
-				              result.ToLowerInvariant().Contains("sign in"), 
+				              result.ToLowerInvariant().Contains("sign in"), Is.True, 
 					$"Should consistently handle auth error: {error}");
 			}
 
@@ -787,16 +787,16 @@ namespace TS3ABotUnitTests
 			var selected2 = YoutubeDlHelper.FilterBestEnhanced(video2Formats);
 
 			// Assert - Both should select the same format_id consistently
-			Assert.IsNotNull(selected1, "Video 1 should select a format despite null bitrates");
-			Assert.IsNotNull(selected2, "Video 2 should select a format despite null bitrates");
+			Assert.That(selected1, Is.Not.Null, "Video 1 should select a format despite null bitrates");
+			Assert.That(selected2, Is.Not.Null, "Video 2 should select a format despite null bitrates");
 
-			Assert.AreEqual(selected1.format_id, selected2.format_id, 
+			Assert.That(selected1.format_id, Is.EqualTo(selected2.format_id), 
 				"Both videos should select the same format_id when handling null bitrates");
 
 			// Both should prefer AAC-LC (format 93) over HE-AAC (format 91)
-			Assert.AreEqual("93", selected1.format_id, 
+			Assert.That(selected1.format_id, Is.EqualTo("93"), 
 				"Should consistently select AAC-LC format when bitrates are null");
-			Assert.AreEqual("93", selected2.format_id, 
+			Assert.That(selected2.format_id, Is.EqualTo("93"), 
 				"Should consistently select AAC-LC format when bitrates are null");
 
 			Console.WriteLine($"Null bitrate handling consistent: Both videos selected format {selected1.format_id}");

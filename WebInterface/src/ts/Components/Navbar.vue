@@ -6,7 +6,7 @@
 				id="ts3ab-logo"
 				tag="router-link"
 				:to="{ path: '/' }"
-			>TS3AudioBot</b-navbar-item>
+			>Dixibot</b-navbar-item>
 		</template>
 		<template slot="start">
 			<b-navbar-item tag="router-link" :to="{ path: '/overview' }">
@@ -41,11 +41,18 @@
 			<b-tooltip label="Chat or ask for help" position="is-bottom">
 				<b-navbar-item
 					tag="a"
-					href="https://app.north-industries.com/#/user/@admin:chat.north-industries.com"
+					href="https://github.com/Splamy/TS3AudioBot"
 					target="_blank"
 				>
 					<b-icon icon="account-multiple"></b-icon>
 					<span class="is-hidden-desktop">Chat or ask for help</span>
+				</b-navbar-item>
+			</b-tooltip>
+
+			<b-tooltip :label="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'" position="is-bottom">
+				<b-navbar-item tag="a" @click.native="toggleDarkMode()">
+					<b-icon :icon="isDark ? 'weather-sunny' : 'weather-night'"></b-icon>
+					<span class="is-hidden-desktop">{{ isDark ? 'Light Mode' : 'Dark Mode' }}</span>
 				</b-navbar-item>
 			</b-tooltip>
 
@@ -72,7 +79,12 @@ import SiteSettingsModal from "../Modals/SiteSettingsModal.vue";
 
 export default Vue.extend({
 	data() {
-		return {};
+		return {
+			isDark: localStorage.getItem("theme") !== "light"
+		};
+	},
+	created() {
+		this.applyTheme();
 	},
 	methods: {
 		openSiteSettings() {
@@ -81,6 +93,18 @@ export default Vue.extend({
 				component: SiteSettingsModal,
 				hasModalCard: false
 			});
+		},
+		toggleDarkMode() {
+			this.isDark = !this.isDark;
+			localStorage.setItem("theme", this.isDark ? "dark" : "light");
+			this.applyTheme();
+		},
+		applyTheme() {
+			if (this.isDark) {
+				document.documentElement.classList.add("theme-dark");
+			} else {
+				document.documentElement.classList.remove("theme-dark");
+			}
 		}
 	},
 	components: {

@@ -27,47 +27,47 @@ namespace TS3ABotUnitTests
 			string? CallCommand(string command) => CommandManager.Execute(execInfo, command).GetAwaiter().GetResult().AsString();
 
 			var output = CallCommand("!help");
-			Assert.AreEqual(output, CallCommand("!h"));
-			Assert.AreEqual(output, CallCommand("!eval !h"));
+			Assert.That(CallCommand("!h"), Is.EqualTo(output));
+			Assert.That(CallCommand("!eval !h"), Is.EqualTo(output));
 			Assert.Throws<CommandException>(() => CallCommand("!"));
 
 			// Test random
 			for (int i = 0; i < 1000; i++)
 			{
 				var r = int.Parse(CallCommand("!rng -10 100")!);
-				Assert.GreaterOrEqual(r, -10);
-				Assert.Less(r, 100);
+				Assert.That(r, Is.GreaterThanOrEqualTo(-10));
+				Assert.That(r, Is.LessThan(100));
 			}
 
 			// Take
 			Assert.Throws<CommandException>(() => CallCommand("!take"));
-			Assert.AreEqual("text", CallCommand("!take 1 text"));
+			Assert.That(CallCommand("!take 1 text"), Is.EqualTo("text"));
 			Assert.Throws<CommandException>(() => CallCommand("!take 2 text"));
 			Assert.Throws<CommandException>(() => CallCommand("!take -1 text"));
-			Assert.AreEqual("no", CallCommand("!take 1 \"no more text\""));
-			Assert.AreEqual("no more", CallCommand("!take 2 \"no more text\""));
-			Assert.AreEqual("more", CallCommand("!take 1 1 \"no more text\""));
-			Assert.AreEqual("more text", CallCommand("!take 2 1 \"no more text\""));
+			Assert.That(CallCommand("!take 1 \"no more text\""), Is.EqualTo("no"));
+			Assert.That(CallCommand("!take 2 \"no more text\""), Is.EqualTo("no more"));
+			Assert.That(CallCommand("!take 1 1 \"no more text\""), Is.EqualTo("more"));
+			Assert.That(CallCommand("!take 2 1 \"no more text\""), Is.EqualTo("more text"));
 			Assert.Throws<CommandException>(() => CallCommand("!take 2 -1 \"no more text\""));
-			Assert.AreEqual("te", CallCommand("!take 1 0 x text"));
-			Assert.AreEqual("t", CallCommand("!take 1 1 x text"));
-			Assert.AreEqual("text", CallCommand("!take 1 0 z text"));
+			Assert.That(CallCommand("!take 1 0 x text"), Is.EqualTo("te"));
+			Assert.That(CallCommand("!take 1 1 x text"), Is.EqualTo("t"));
+			Assert.That(CallCommand("!take 1 0 z text"), Is.EqualTo("text"));
 			Assert.Throws<CommandException>(() => CallCommand("!take 1 1 z text"));
-			Assert.AreEqual("", CallCommand("!take 0 text"));
-			Assert.AreEqual("", CallCommand("!take 0 0 text"));
-			Assert.AreEqual("", CallCommand("!take 0 0 z text"));
+			Assert.That(CallCommand("!take 0 text"), Is.EqualTo(""));
+			Assert.That(CallCommand("!take 0 0 text"), Is.EqualTo(""));
+			Assert.That(CallCommand("!take 0 0 z text"), Is.EqualTo(""));
 
 			// If
 			Assert.Throws<CommandException>(() => CallCommand("!if a == a"));
 			Assert.Throws<CommandException>(() => CallCommand("!if a == b"));
-			Assert.AreEqual("text", CallCommand("!if a == a text"));
-			Assert.IsNull(CallCommand("!if a == b text"));
-			Assert.AreEqual("other", CallCommand("!if a == b text other"));
-			Assert.AreEqual("text", CallCommand("!if 1 == 1 text other"));
-			Assert.AreEqual("other", CallCommand("!if 1 == 2 text other"));
-			Assert.AreEqual("text", CallCommand("!if 1.0 == 1 text other"));
-			Assert.AreEqual("other", CallCommand("!if 1.0 == 1.1 text other"));
-			Assert.AreEqual("text", CallCommand("!if a == a text (!)"));
+			Assert.That(CallCommand("!if a == a text"), Is.EqualTo("text"));
+			Assert.That(CallCommand("!if a == b text"), Is.Null);
+			Assert.That(CallCommand("!if a == b text other"), Is.EqualTo("other"));
+			Assert.That(CallCommand("!if 1 == 1 text other"), Is.EqualTo("text"));
+			Assert.That(CallCommand("!if 1 == 2 text other"), Is.EqualTo("other"));
+			Assert.That(CallCommand("!if 1.0 == 1 text other"), Is.EqualTo("text"));
+			Assert.That(CallCommand("!if 1.0 == 1.1 text other"), Is.EqualTo("other"));
+			Assert.That(CallCommand("!if a == a text (!)"), Is.EqualTo("text"));
 			Assert.Throws<CommandException>(() => CallCommand("!if a == b text (!)"));
 		}
 
@@ -79,10 +79,10 @@ namespace TS3ABotUnitTests
 			var group = execInfo.GetModule<CommandManager>()!.RootGroup;
 			group.AddCommand("cmd", new FunctionCommand(s => s));
 
-			Assert.AreEqual("a", CallCommand("!cmd a"));
-			Assert.AreEqual("a b", CallCommand("!cmd a b"));
-			Assert.AreEqual("a", CallCommand("!cmd a \" b"));
-			Assert.AreEqual("a b 1", CallCommand("!cmd a b 1"));
+			Assert.That(CallCommand("!cmd a"), Is.EqualTo("a"));
+			Assert.That(CallCommand("!cmd a b"), Is.EqualTo("a b"));
+			Assert.That(CallCommand("!cmd a \" b"), Is.EqualTo("a"));
+			Assert.That(CallCommand("!cmd a b 1"), Is.EqualTo("a b 1"));
 		}
 
 		[Test]
@@ -100,36 +100,36 @@ namespace TS3ABotUnitTests
 
 			// Exact match
 			var result = filter.Filter(filterList, "help");
-			Assert.AreEqual(1, result.Count());
-			Assert.AreEqual("help", result.First().Key);
+			Assert.That(result.Count(), Is.EqualTo(1));
+			Assert.That(result.First().Key, Is.EqualTo("help"));
 
 			// The first occurence of y
 			result = filter.Filter(filterList, "y");
-			Assert.AreEqual(1, result.Count());
-			Assert.AreEqual("ply", result.First().Key);
+			Assert.That(result.Count(), Is.EqualTo(1));
+			Assert.That(result.First().Key, Is.EqualTo("ply"));
 
 			// The smallest word
 			result = filter.Filter(filterList, "zorn");
-			Assert.AreEqual(1, result.Count());
-			Assert.AreEqual("ply", result.First().Key);
+			Assert.That(result.Count(), Is.EqualTo(1));
+			Assert.That(result.First().Key, Is.EqualTo("ply"));
 
 			// First letter match
 			result = filter.Filter(filterList, "q");
-			Assert.AreEqual(1, result.Count());
-			Assert.AreEqual("quit", result.First().Key);
+			Assert.That(result.Count(), Is.EqualTo(1));
+			Assert.That(result.First().Key, Is.EqualTo("quit"));
 
 			// Ignore other letters
 			result = filter.Filter(filterList, "palyndrom");
-			Assert.AreEqual(1, result.Count());
-			Assert.AreEqual("play", result.First().Key);
+			Assert.That(result.Count(), Is.EqualTo(1));
+			Assert.That(result.First().Key, Is.EqualTo("play"));
 
 			filterList.Add("pla", null);
 
 			// Ambiguous command
 			result = filter.Filter(filterList, "p");
-			Assert.AreEqual(2, result.Count());
-			Assert.IsTrue(result.Any(r => r.Key == "ply"));
-			Assert.IsTrue(result.Any(r => r.Key == "pla"));
+			Assert.That(result.Count(), Is.EqualTo(2));
+			Assert.That(result.Any(r => r.Key == "ply"), Is.True);
+			Assert.That(result.Any(r => r.Key == "pla"), Is.True);
 		}
 
 		private static string OptionalFunc(string? s = null) => s is null ? "NULL" : "NOT NULL";
@@ -147,22 +147,22 @@ namespace TS3ABotUnitTests
 			group.AddCommand("optional", new FunctionCommand(GetType().GetMethod(nameof(OptionalFunc), BindingFlags.NonPublic | BindingFlags.Static)!));
 
 			// Basic tests
-			Assert.AreEqual("ONE", CommandManager.Execute(execInfo, new ICommand[] { new ResultCommand("one") }).Result.AsString());
-			Assert.AreEqual("ONE", CallCommand("!one"));
-			Assert.AreEqual("TWO", CallCommand("!t"));
-			Assert.AreEqual("TEST", CallCommand("!e TEST"));
-			Assert.AreEqual("ONE", CallCommand("!o"));
+			Assert.That(CommandManager.Execute(execInfo, new ICommand[] { new ResultCommand("one") }).Result.AsString(), Is.EqualTo("ONE"));
+			Assert.That(CallCommand("!one"), Is.EqualTo("ONE"));
+			Assert.That(CallCommand("!t"), Is.EqualTo("TWO"));
+			Assert.That(CallCommand("!e TEST"), Is.EqualTo("TEST"));
+			Assert.That(CallCommand("!o"), Is.EqualTo("ONE"));
 
 			// Optional parameters
 			Assert.Throws<CommandException>(() => CallCommand("!e"));
-			Assert.AreEqual("NULL", CallCommand("!op"));
-			Assert.AreEqual("NOT NULL", CallCommand("!op 1"));
+			Assert.That(CallCommand("!op"), Is.EqualTo("NULL"));
+			Assert.That(CallCommand("!op 1"), Is.EqualTo("NOT NULL"));
 
 			// Command chaining
-			Assert.AreEqual("TEST", CallCommand("!e (!e TEST)"));
-			Assert.AreEqual("TWO", CallCommand("!e (!t)"));
-			Assert.AreEqual("NOT NULL", CallCommand("!op (!e TEST)"));
-			Assert.AreEqual("ONE", CallCommand("!(!e on)"));
+			Assert.That(CallCommand("!e (!e TEST)"), Is.EqualTo("TEST"));
+			Assert.That(CallCommand("!e (!t)"), Is.EqualTo("TWO"));
+			Assert.That(CallCommand("!op (!e TEST)"), Is.EqualTo("NOT NULL"));
+			Assert.That(CallCommand("!(!e on)"), Is.EqualTo("ONE"));
 
 			// Command overloading
 			var intCom = new Func<int, string>(_ => "INT");
@@ -172,16 +172,16 @@ namespace TS3ABotUnitTests
 				new FunctionCommand(strCom.Method, strCom.Target)
 			}));
 
-			Assert.AreEqual("INT", CallCommand("!overlord 1"));
-			Assert.AreEqual("STRING", CallCommand("!overlord a"));
+			Assert.That(CallCommand("!overlord 1"), Is.EqualTo("INT"));
+			Assert.That(CallCommand("!overlord a"), Is.EqualTo("STRING"));
 			Assert.Throws<CommandException>(() => CallCommand("!overlord"));
 
 			// Return unwrap
 			var json = JsonValue.Create("WRAP");
 			group.AddCommand("wrapjson", new FunctionCommand(new Func<JsonValue>(() => json)));
-			Assert.AreEqual(json, CommandManager.Execute(execInfo, "!wrapjson").Result.AsRaw());
-			Assert.AreEqual("WRAP", CallCommand("!wrapjson")); // AsString()
-			Assert.AreEqual("WRAP", CallCommand("!echo (!wrapjson)"));
+			Assert.That(CommandManager.Execute(execInfo, "!wrapjson").Result.AsRaw(), Is.EqualTo(json));
+			Assert.That(CallCommand("!wrapjson"), Is.EqualTo("WRAP")); // AsString()
+			Assert.That(CallCommand("!echo (!wrapjson)"), Is.EqualTo("WRAP"));
 		}
 
 		[Test]
@@ -268,7 +268,7 @@ namespace TS3ABotUnitTests
 		{
 			var astc = CommandParser.ParseCommandRequest(inp);
 			var ast = ((AstCommand)astc).Parameter[0];
-			Assert.AreEqual(outp, ((AstValue)ast).Value);
+			Assert.That(((AstValue)ast).Value, Is.EqualTo(outp));
 		}
 	}
 
