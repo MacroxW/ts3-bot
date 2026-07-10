@@ -19,11 +19,11 @@
 					<p class="login-help">Ingresá tus credenciales para administrar tus bots.</p>
 				</div>
 				<div class="login-form">
-					<b-field label="Client UID">
-						<b-input :value="authUid" @input="authUidInput" placeholder="Tu identidad de TeamSpeak" icon="account" expanded />
+					<b-field label="Usuario">
+						<b-input :value="authUid" @input="authUidInput" placeholder="Nombre de usuario" icon="account" expanded />
 					</b-field>
-					<b-field label="Token de acceso">
-						<b-input v-model="authToken" placeholder="Token generado con !api token" type="password" icon="key" password-reveal expanded @keyup.native.enter="login" />
+					<b-field label="Contraseña">
+						<b-input v-model="authToken" placeholder="Contraseña" type="password" icon="key" password-reveal expanded @keyup.native.enter="login" />
 					</b-field>
 					<b-button type="is-primary" icon-left="login" expanded :loading="authenticating" :disabled="!canLogin" @click="login">
 						{{ logged_in ? 'Ir al panel' : 'Iniciar sesión' }}
@@ -104,7 +104,7 @@ export default Vue.extend({
 				const res = await jmerge().get();
 				this.logged_in = Util.check(this, res, "No se pudieron validar las credenciales");
 				if (this.logged_in) window.dispatchEvent(new Event("dixibot-auth"));
-				if (!this.logged_in) this.authError = "UID o token incorrectos";
+				if (!this.logged_in) this.authError = "Usuario o contraseña incorrectos";
 				return this.logged_in;
 			} catch (_) {
 				this.logged_in = false;

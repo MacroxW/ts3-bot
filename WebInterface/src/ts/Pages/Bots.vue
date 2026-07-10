@@ -196,6 +196,7 @@ import { BotStatus } from "../Model/BotStatus";
 import { Timer } from "../Timer";
 import { Util } from "../Util";
 import QuickConnectModal from "../Modals/QuickConnectModal.vue";
+import { QuickConnectData } from "../ApiObjects";
 import DeleteBotModal from "../Modals/DeleteBotModal.vue";
 import CreateBotModal from "../Modals/CreateBotModal.vue";
 import EditableText from "../Components/EditableText.vue";
@@ -300,8 +301,14 @@ export default Vue.extend({
       else if (status == BotStatus.Offline) return "is-danger";
       else return "";
     },
-	  async connectBot(address: string) {
-		const res = await cmd<CmdBotInfo>("bot", "connect", "to", address).get();
+	  async connectBot(data: QuickConnectData) {
+		const res = await cmd<CmdBotInfo>(
+			"bot", "connect", "to",
+			data.address,
+			data.password || "",
+			data.channel || "",
+			data.channelPassword || ""
+		).get();
 		if (!Util.check(this, res, "Error connecting bot")) {
         return;
       }

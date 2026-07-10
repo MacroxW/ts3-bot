@@ -263,3 +263,7 @@ ytdlp.sh
 # CocoIndex Code (ccc)
 /.cocoindex_code/
 >>>>>>> 986766486cf736a895a4fd51493e22fcbc7460e8
+ts3audiobot-log.db
+ts3audiobot.db
+data/ts3audiobot-log.db
+data/ts3audiobot.db

@@ -320,8 +320,8 @@ namespace TS3AudioBot.Web.Api
 			if (!string.Equals(authParts[0], "BASIC", StringComparison.OrdinalIgnoreCase))
 				return ErrorUnsupportedScheme;
 
-			string userUid;
-			string token;
+			string username;
+			string password;
 			try
 			{
 				var data = Convert.FromBase64String(authParts[1]);
@@ -329,19 +329,13 @@ namespace TS3AudioBot.Web.Api
 
 				if (index < 0)
 					return ErrorAuthFailure;
-				userUid = Tools.Utf8Encoder.GetString(data, 0, index);
-				token = Tools.Utf8Encoder.GetString(data, index + 1, data.Length - (index + 1));
+				username = Tools.Utf8Encoder.GetString(data, 0, index);
+				password = Tools.Utf8Encoder.GetString(data, index + 1, data.Length - (index + 1));
 			}
 			catch (Exception) { return "Malformed base64 string"; }
 
-			var dbToken = tokenManager.GetToken(userUid);
-			if (dbToken is null)
-				return ErrorNoUserOrToken;
-
-			if (dbToken.Value != token)
-				return ErrorAuthFailure;
-
-			return new ApiCall((Uid)userUid, token: dbToken.Value);
+			// Temporal: acepta cualquier usuario/contraseña
+			return new ApiCall((Uid)username, token: password);
 		}
 	}
 }

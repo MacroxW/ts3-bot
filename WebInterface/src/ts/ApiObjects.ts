@@ -1,6 +1,13 @@
 import { BotStatus } from "./Model/BotStatus";
 import { TargetSendMode } from "./Model/TargetSendMode";
 
+export interface QuickConnectData {
+	address: string;
+	password?: string;
+	channel?: string;
+	channelPassword?: string;
+}
+
 export interface IVersion {
 	build: string;
 	platform: string;

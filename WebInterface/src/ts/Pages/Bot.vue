@@ -172,7 +172,9 @@ export default Vue.extend({
 					return;
 
 				this.info.botInfo = res[0] ?? Empty.CmdBotInfo();
-				this.info.nowPlaying = res[1] ?? Empty.CmdQueueInfo();
+				const nowPlaying = res[1] ?? Empty.CmdQueueInfo();
+				if (!Array.isArray(nowPlaying.Items)) nowPlaying.Items = [];
+				this.info.nowPlaying = nowPlaying;
 				this.info.song = res[2];
 				this.info.repeat = res[3];
 				this.info.shuffle = res[4];

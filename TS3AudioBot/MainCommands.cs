@@ -269,12 +269,16 @@ namespace TS3AudioBot
 		}
 
 		[Command("bot connect to")]
-		public static async Task<BotInfo> CommandBotConnectNew(BotManager bots, string address, string? password = null)
+		public static async Task<BotInfo> CommandBotConnectNew(BotManager bots, string address, string? password = null, string? channel = null, string? channelPassword = null)
 		{
 			var botConf = bots.CreateNewBot();
 			botConf.Connect.Address.Value = address;
 			if (!string.IsNullOrEmpty(password))
 				botConf.Connect.ServerPassword.Password.Value = password;
+			if (!string.IsNullOrEmpty(channel))
+				botConf.Connect.Channel.Value = channel;
+			if (!string.IsNullOrEmpty(channelPassword))
+				botConf.Connect.ChannelPassword.Password.Value = channelPassword;
 			var botInfo = await bots.RunBot(botConf);
 			if (!botInfo.Ok)
 				throw new CommandException(strings.error_could_not_create_bot + $" ({botInfo.Error})", CommandExceptionReason.CommandError);
